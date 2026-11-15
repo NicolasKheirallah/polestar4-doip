@@ -1221,7 +1221,7 @@ def test_read_multi_refuses_blocked_batch(p4, sim):
 def test_scan_header_records_provenance(p4, root, monkeypatch):
     monkeypatch.setenv("P4_COMMIT", "abc1234")
     p4("scan", "1601", "--ranges", "E37B", "--timeout", "0.05", "--skip-silent-after", "7")
-    header = store.read_jsonl(store.scan_path(0x1601, "2026-11-14"))[0]
+    header = store.read_jsonl(store.scan_path(0x1601))[0]
     assert header["v"] == 2 and header["tool"] and header["commit"] == "abc1234"
     assert header["timeout"] == 0.05 and header["skip_silent_after"] == 7
 
