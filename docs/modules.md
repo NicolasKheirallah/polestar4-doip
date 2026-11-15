@@ -8,7 +8,7 @@ All 43 modules that answer on this car, with the answering DIDs listed in `did-m
 | `1011` | Telematics | SIM and modem IDs, assistance phone numbers in DIDs |
 | `1012` | Driver monitoring | guess |
 | `1015` | Wireless access / digital key (UWB, BLE, NFC)? | software names (`PAS_VE`, `…CCA…`, `…CCR…`) |
-| `1023` | Wireless phone charger | part `6608017285` is sold as "control unit for wireless charging" (the usual label for this address is BNCM, which looks wrong here) |
+| `1023` | Key system control module (BNCM), Marquardt | reports `BNCM` and `MARQUARDT`, matching the manual's key system certification (BNCM model GE1); the phone charger is a separate Changzhou Tenglong part |
 | `1201` | Infotainment | park signal `D938` |
 | `1202` | Camera / vision | guess; a second address on the infotainment unit (same core part and serial as `1201`) |
 | `1212` | Audio amplifier | guess |
@@ -16,8 +16,8 @@ All 43 modules that answer on this car, with the answering DIDs listed in `did-m
 | `1251` | Head-up display | guess; answers physical addressing only, not `1FFF` |
 | `1301` | Mobileye SuperVision ECU | firmware string names `P417_EU` and `GAS52`; 7 camera entries (`D921`–`D927`) with 4 type codes |
 | `1314` | Dash camera | guess |
-| `1316` / `1317` | Unknown left/right pair | same hardware part, serials 7 apart, same DID set, very few live values; corner sensors? |
-| `1344` | Front radar | guess |
+| `1316` / `1317` | Unknown left/right pair | same hardware part, serials 7 apart, same DID set, very few live values; corner sensors? (the manual certifies only one radar, so probably not radars) |
+| `1344` | Front radar | label guess; the manual certifies one radar, the F5CP12 front-centre unit (FCC grantee NF3 = Bosch) |
 | `1601` | Vehicle dynamics / parking brake | EPB signals |
 | `1614` | Suspension | chassis mode `D90F` |
 | `1615` | Steering column lock | guess |

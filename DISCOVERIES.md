@@ -12,7 +12,8 @@ Offline, from the identification reads in the 2026-11-10 to 2026-11-12 full scan
 
 - New `catalogue/hardware.yaml`: hardware and delivery part numbers for all 43 modules, and the physical components known so far with sources.
 - Two pairs of addresses are each one physical unit (same part numbers and the same ECU serial, different software): `1201` infotainment with `1202` camera/vision, and `1633` gear stalk with `1672` steering angle.
-- Shared parts: the two seats (`1A27`/`1A28`), the two headlamps, and the `1316`/`1317` pair. Seven door and seat units carry the same F18A code (`100057`), probably one supplier. The wireless charger names Marquardt.
+- Shared parts: the two seats (`1A27`/`1A28`), the two headlamps, and the `1316`/`1317` pair. Seven door and seat units carry the same F18A code (`100057`), probably one supplier.
+- Makers from the owner's manual's radio certification pages: `1023` is the key system's BNCM by Marquardt (model GE1), not the phone charger as we had it; the phone charger is by Changzhou Tenglong; the one certified radar is the F5CP12 front-centre unit, FCC ID NF3-F5CP12 (NF3 is Bosch's FCC grantee code). With only one radar certified, the corner-radar guess for `1316`/`1317` looks weaker.
 
 ## 2026.11.15.2 - Motor speed in rpm and the gear ratio
 

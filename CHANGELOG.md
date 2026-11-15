@@ -5,7 +5,7 @@ observations about the car belong in docs/findings.md and DISCOVERIES.md, not he
 
 ## 2026-11-15 — hardware catalogue
 
-- `catalogue/hardware.yaml`: part numbers per module (`F1AA`, `F1AB`, `F12A`, printable `F18A`), shared units, physical components. No serials.
+- `catalogue/hardware.yaml`: part numbers per module, makers from the manual's certification pages (`F1AA`, `F1AB`, `F12A`, printable `F18A`), shared units, physical components. No serials.
 - `catalogue/modules.yaml`, `docs/modules.md`, `docs/findings.md`: `1202` shares a unit with `1201`, `1672` with `1633`. README lists the new file.
 - `tool/tests/test_catalogue.py`: the hardware file covers every module once, every address is a known module, and no serial-type field appears.
 

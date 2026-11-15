@@ -184,6 +184,8 @@ with open(os.path.join(REPO, "catalogue", "hardware.yaml")) as f:
 def test_hardware_covers_every_module_once():
     addrs = [m["addr"] for m in HARDWARE["modules"]]
     assert sorted(addrs) == sorted(m["addr"] for m in MODULES)
+    # labels are copied from modules.yaml (which the public site shows); keep the two from drifting apart
+    assert {m["addr"]: m["label"] for m in HARDWARE["modules"]} == {m["addr"]: str(m["label"]) for m in MODULES}
 
 
 def test_hardware_fields_are_part_numbers_only():

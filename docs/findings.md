@@ -34,10 +34,10 @@ What has been learned about one car, module by module, including leads that are 
 - **What it is**: keyless entry and phone-as-key. 162 DIDs. Software names include `PAS_VE` (passive entry?) and `…CCA…`/`…CCR…` strings, perhaps Car Connectivity Consortium digital-key components (guess). Polestar documents UWB, BLE and NFC key-card for this car.
 
 - **Signals (2026-11-14)**: the parking sensor distances live here, `B112`-`B121`, in cm (511 = nothing seen), matching the screen to within about 3 cm. Even DIDs are left, odd are right: rear corners `B112`/`B113`, rear inner `B114`/`B115`, front corners `B116`/`B117`, front inner `B118`/`B119`; `B120`/`B121` are the two extra rear sensors (the car has 4 front, 6 rear) and have not triggered yet. Active only in R or D (P).
-## 1023 Wireless phone charger
+## 1023 Key system control module (BNCM)
 
-- **What it is**: part `6608017285` is sold as "control unit for wireless charging". 142 DIDs, a lot for a phone charger, so it may be a combined unit.
-- **Leads**: none yet; a phone on/off the pad has not been watched.
+- **What it is**: the key system's BNCM, made by Marquardt. It reports `F197` = `BNCM` and `F18A` = `MARQUARDT`, and the owner's manual's [key system certification](https://www.polestar.com/uk/manual/polestar-4/2026/article/0a500a085a173960c0a8b09771bff25e-f19ebb76fc2e9629ac1b7acc5528389d-8664b2fa77a7e089c0a8296870d1a409/) lists a Marquardt BNCM (model GE1, FCC ID IYZGE1) with a UWB anchor (GU1), NFC reader (GR3) and key fob (GK2). 142 DIDs. The phone charger is a separate part: the manual's [wireless charger and NFC approval](https://www.polestar.com/uk/manual/polestar-4/2026/article/d8eb41f1d4b91c11c0a8cc3748b783e2-dfdd3d233eb7acaec0a8b0c176da1984-8664b2fa77a7e089c0a8296870d1a409/) names Changzhou Tenglong Auto Parts as its maker. `F1BB` lists part `6608017285`, which a parts shop sells as "control unit for wireless charging", perhaps the charger pad as a sub-unit (inference). This replaces the earlier "wireless phone charger" reading (2026-11-15).
+- **Leads**: none yet. Not yet watched: a key fob or phone key approaching, and a phone on/off the charging pad (in case the pad is its sub-unit).
 
 ## 1201 Infotainment
 
@@ -86,7 +86,7 @@ What has been learned about one car, module by module, including leads that are 
 
 ## 1344 Front radar
 
-- **What it is**: label guess (FLR); not checked. 45 DIDs.
+- **What it is**: label guess (FLR); not checked. 45 DIDs. The manual's [radar type approvals](https://www.polestar.com/uk/manual/polestar-4/2026/article/d8eb41f1d4b91c11c0a8cc3748b783e2-9bc02397d4b9ca5fc0a8cc37097af9c5-8664b2fa77a7e089c0a8296870d1a409/) list one radar, the front-centre unit F5CP12 (FCC ID NF3-F5CP12; NF3 is Bosch's FCC grantee code), 76-77 GHz. That this address is that radar rests on the label.
 - **Leads**: being watched with `1316`/`1317` while the cluster draws surrounding cars; nothing correlated yet. `D923` byte 0 rises one step every 30-60 s after the car wakes and falls after use: behaves like a temperature, not traffic. `D112` is module supply voltage (x 0.08 V), as on `1C01`.
 
 ## 1601 Vehicle dynamics / parking brake

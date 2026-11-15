@@ -5,8 +5,8 @@
 - {addr: "1001", label: VCM, role: vehicle control module / gateway address, status: unverified}
 - {addr: "1011", label: TEM, role: telematics, status: unverified}
 - {addr: "1012", label: DMM, role: driver monitoring, status: unverified}
-- {addr: "1015", label: WAM, role: "wireless access (key/phone); also holds the parking sensor distances (B112-B121)", status: unverified}
-- {addr: "1023", label: WCM, role: wireless phone charger (part 6608017285), status: unverified}
+- {addr: "1015", label: WAM, role: "wireless access (key/phone; how it splits the key system with 1023, the Marquardt BNCM, is not known); also holds the parking sensor distances (B112-B121)", status: unverified}
+- {addr: "1023", label: BNCM, role: "key system control module by Marquardt (model GE1, FCC ID IYZGE1); reports F197 BNCM and F18A MARQUARDT, which match the manual's key system certification", status: unverified}
 - {addr: "1201", label: IHU, role: infotainment (park D938), status: confirmed}
 - {addr: "1202", label: TVM, role: camera/vision, status: unverified, note: "same physical unit as 1201 (same core part and serial)"}
 - {addr: "1212", label: AUD, role: audio amplifier, status: unverified}
@@ -14,9 +14,9 @@
 - {addr: "1251", label: HUD, role: head-up display, status: unverified, note: answers a physical address scan but not the 1FFF broadcast}
 - {addr: "1301", label: ADCU3, role: Mobileye SuperVision driver assistance (never read EE13 or EE14), status: unverified}
 - {addr: "1314", label: DVR 12V, role: dash camera recorder, status: unverified}
-- {addr: "1316", label: "?", role: "?", status: unknown, note: "pair with 1317 (same HW 6608445312, serials 7 apart); radar guess"}
+- {addr: "1316", label: "?", role: "?", status: unknown, note: "pair with 1317 (same HW 6608445312, serials 7 apart); radar guess weakened: the manual certifies only one radar"}
 - {addr: "1317", label: "?", role: "?", status: unknown, note: pair with 1316}
-- {addr: "1344", label: FLR4, role: front radar, status: unverified}
+- {addr: "1344", label: FLR4, role: "front radar; the manual certifies one radar, the F5CP12 front-centre unit (FCC grantee NF3 = Bosch)", status: unverified}
 - {addr: "1601", label: VDDM, role: vehicle dynamics / parking brake, status: confirmed}
 - {addr: "1614", label: SUM, role: suspension (chassis mode D90F), status: confirmed}
 - {addr: "1615", label: SCL, role: steering column lock, status: unverified}
