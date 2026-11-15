@@ -1,0 +1,132 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Charge sessions</title>
+<style>
+:root{--bg:#fff;--fg:#1d2329;--mut:#66707a;--line:#dde2e6;--acc:#0b6bcb;--warn:#b26a00;--card:#f6f8fa;--s2:#c2410c}
+@media (prefers-color-scheme: dark){:root{--bg:#14181c;--fg:#e4e8ec;--mut:#98a2ad;--line:#2c333a;--acc:#5aa9ff;--warn:#f0b35a;--card:#1b2026;--s2:#fb923c}}
+body{background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,sans-serif;margin:0 auto;max-width:1200px;padding:16px}
+a{color:var(--acc)}nav a{margin-right:14px}h1{font-size:20px;margin:10px 0}h2{font-size:15px;margin:16px 0 4px}
+#status{background:var(--card);padding:8px 12px;border-radius:6px;margin-bottom:10px}
+.stale{color:var(--warn);font-weight:600}
+select{background:var(--bg);color:var(--fg);border:1px solid var(--line);border-radius:4px;padding:4px 6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin:10px 0}
+.tile{background:var(--card);border-radius:6px;padding:8px 10px}
+.l{font-size:12px;color:var(--mut)}.v{font-size:22px;font-weight:600;font-variant-numeric:tabular-nums}
+.charts{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:12px}
+@media (max-width:480px){.charts{grid-template-columns:1fr}}
+canvas{width:100%;height:220px;display:block;background:var(--card);border-radius:6px}
+.key{font-size:12px;color:var(--mut)}.key b{display:inline-block;width:10px;height:3px;vertical-align:middle;margin:0 4px 0 8px}
+</style></head><body>
+<nav><a href="index.html">Overview</a><a href="live.html">Live</a><a href="battery.html">Battery</a><a href="matrix.html">Matrix</a><a href="charge.html">Charge</a><a href="findings.html">Findings</a><a href="signals.html">Signals</a><a href="research.html">Research</a><a href="text.html">Text</a><a href="marks.html">Timeline</a><a href="logs.html">Watch logs</a></nav>
+<h1>Charge sessions</h1>
+<div id="status">Loading…</div>
+<label class="l">Session <select id="pick"></select></label>
+<div class="grid" id="tiles"></div>
+<div class="charts">
+<div><h2>Charge curve: power vs SoC</h2><canvas id="curve"></canvas><div class="key"><b style="background:var(--acc)"></b>pack power kW<b style="background:var(--s2)"></b>charge power limit (489C)</div></div>
+<div><h2>Power over time</h2><canvas id="power"></canvas><div class="key"><b style="background:var(--acc)"></b>pack power kW<b style="background:var(--s2)"></b>limit</div></div>
+<div><h2>Pack temperature (EE83, 28 sensors)</h2><canvas id="temp"></canvas><div class="key"><b style="background:var(--s2)"></b>max °C<b style="background:var(--acc)"></b>min °C</div></div>
+<div><h2>Cell-group voltage (DA31, 110 groups)</h2><canvas id="cells"></canvas><div class="key"><b style="background:var(--s2)"></b>max V<b style="background:var(--acc)"></b>min V<b style="background:var(--mut)"></b>spread mV (right axis)</div></div>
+</div>
+<p class="l">Decodes from catalogue/signals.yaml (4802 current and 497C voltage are probable, not confirmed). Power = −current × voltage. Energy is integrated from pack power, so it is energy into the pack, not from the charger. A new session starts after a 15 min gap in charge-watch readings.</p>
+<script>
+const $ = id => document.getElementById(id);
+const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+let sessions = [], chosen = null, pinned = false;
+function fmt(v, d, u){ return v == null || isNaN(v) ? '–' : v.toFixed(d) + (u || '') }
+function stats(pts){
+  const last = pts[pts.length - 1], first = pts[0];
+  let kwh = 0, peak = 0;
+  for (let i = 1; i < pts.length; i++){
+    const a = pts[i-1], b = pts[i];
+    if (a.kw != null && b.kw != null && b.e - a.e < 120) kwh += (a.kw + b.kw) / 2 * (b.e - a.e) / 3600;
+  }
+  for (const p of pts) if (p.kw > peak) peak = p.kw;
+  const mins = (last.e - first.e) / 60;
+  const socs = pts.filter(p => p.soc != null), dsoc = socs.length ? socs[socs.length-1].soc - socs[0].soc : null;
+  const tmaxs = pts.filter(p => p.tmax != null).map(p => p.tmax);
+  return {last, first, kwh, peak, mins, dsoc, socStart: socs.length ? socs[0].soc : null,
+    rate: mins > 0.5 && dsoc != null ? dsoc / mins : null, tpeak: tmaxs.length ? Math.max(...tmaxs) : null,
+    spread: last.cmax != null ? (last.cmax - last.cmin) * 1000 : null};
+}
+function tiles(s){
+  const L = s.last;
+  const t = [['Power now', fmt(L.kw, 1, ' kW')], ['SoC (4801)', fmt(L.soc, 1, ' %')], ['Current', fmt(L.amps == null ? null : -L.amps, 0, ' A')],
+    ['Voltage', fmt(L.volts, 1, ' V')], ['Limit (489C)', fmt(L.limit, 0, ' kW')], ['Peak power', fmt(s.peak, 1, ' kW')],
+    ['SoC added', s.dsoc == null ? '–' : fmt(s.socStart, 1) + ' → ' + fmt(L.soc, 1, ' %')], ['SoC rate', fmt(s.rate, 2, ' %/min')],
+    ['Energy in', fmt(s.kwh, 1, ' kWh')], ['Duration', fmt(s.mins, 0, ' min')],
+    ['Pack temp', L.tmin == null ? '–' : fmt(L.tmin, 1) + '–' + fmt(L.tmax, 1, ' °C')], ['Peak pack temp', fmt(s.tpeak, 1, ' °C')],
+    ['Cell min / max', L.cmin == null ? '–' : fmt(L.cmin, 3) + ' / ' + fmt(L.cmax, 3, ' V')], ['Cell spread', fmt(s.spread, 0, ' mV')]];
+  $('tiles').innerHTML = t.map(([l, v]) => '<div class="tile"><div class="l">' + l + '</div><div class="v">' + v + '</div></div>').join('');
+}
+function chart(id, series, xkey, opts){
+  opts = opts || {};
+  const c = $(id), r = window.devicePixelRatio || 1, W = c.clientWidth, H = c.clientHeight;
+  c.width = W * r; c.height = H * r;
+  const g = c.getContext('2d'); g.scale(r, r); g.clearRect(0, 0, W, H);
+  const pad = {l: 44, r: opts.right ? 44 : 10, t: 10, b: 24};
+  const left = series.filter(s => !s.right), right = series.filter(s => s.right);
+  const xs = series.flatMap(s => s.pts.map(p => p[0]));
+  if (!xs.length) { g.fillStyle = css('--mut'); g.fillText('no data', W/2 - 20, H/2); return }
+  const range = arr => { let lo = Math.min(...arr), hi = Math.max(...arr); if (hi - lo < 1e-9) { lo -= 1; hi += 1 } const m = (hi - lo) * 0.06; return [lo - m, hi + m] };
+  const [x0, x1] = opts.xr || range(xs);
+  const yl = range(left.flatMap(s => s.pts.map(p => p[1])).concat(opts.y0 != null ? [opts.y0] : []));
+  const yr = right.length ? range(right.flatMap(s => s.pts.map(p => p[1]))) : null;
+  const X = x => pad.l + (x - x0) / (x1 - x0) * (W - pad.l - pad.r);
+  const Y = (y, rr) => pad.t + (1 - (y - rr[0]) / (rr[1] - rr[0])) * (H - pad.t - pad.b);
+  g.strokeStyle = css('--line'); g.fillStyle = css('--mut'); g.font = '11px system-ui'; g.lineWidth = 1;
+  for (let i = 0; i <= 4; i++){
+    const yv = yl[0] + (yl[1] - yl[0]) * i / 4, yy = Y(yv, yl);
+    g.beginPath(); g.moveTo(pad.l, yy); g.lineTo(W - pad.r, yy); g.stroke();
+    g.fillText(yv.toFixed(opts.yd != null ? opts.yd : 0), 4, yy + 4);
+    if (yr) { const rv = yr[0] + (yr[1] - yr[0]) * i / 4; g.fillText(rv.toFixed(0), W - pad.r + 4, yy + 4) }
+    const xv = x0 + (x1 - x0) * i / 4;
+    g.fillText(opts.xfmt ? opts.xfmt(xv) : xv.toFixed(0), X(xv) - 14, H - 6);
+  }
+  for (const s of series){
+    const rr = s.right ? yr : yl;
+    g.strokeStyle = css(s.color); g.lineWidth = 1.8; g.beginPath();
+    let prev = null;
+    for (const [x, y] of s.pts){
+      if (prev == null || (opts.gap && x - prev > opts.gap)) g.moveTo(X(x), Y(y, rr)); else g.lineTo(X(x), Y(y, rr));
+      prev = x;
+    }
+    g.stroke();
+  }
+}
+function draw(){
+  const s = sessions.find(x => x.start === chosen) || sessions[0];
+  if (!s) { $('tiles').innerHTML = ''; return }
+  const P = s.points, st = stats(P);
+  tiles(st);
+  const tf = e => new Date(e * 1000).toTimeString().slice(0, 5);
+  const ser = (xk, yk) => P.filter(p => p[xk] != null && p[yk] != null).map(p => [p[xk], p[yk]]);
+  chart('curve', [{pts: ser('soc', 'limit'), color: '--s2'}, {pts: ser('soc', 'kw'), color: '--acc'}], 'soc', {y0: 0, xfmt: v => v.toFixed(0) + '%'});
+  chart('power', [{pts: ser('e', 'limit'), color: '--s2'}, {pts: ser('e', 'kw'), color: '--acc'}], 'e', {y0: 0, xfmt: tf, gap: 120});
+  chart('temp', [{pts: ser('e', 'tmax'), color: '--s2'}, {pts: ser('e', 'tmin'), color: '--acc'}], 'e', {yd: 1, xfmt: tf, gap: 120});
+  const spread = P.filter(p => p.cmax != null).map(p => [p.e, (p.cmax - p.cmin) * 1000]);
+  chart('cells', [{pts: ser('e', 'cmax'), color: '--s2'}, {pts: ser('e', 'cmin'), color: '--acc'}, {pts: spread, color: '--mut', right: true}], 'e', {yd: 3, xfmt: tf, gap: 120, right: true});
+}
+async function load(){
+  try {
+    const r = await fetch('charge.json', {cache: 'no-store'});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    sessions = j.sessions || [];
+    const pick = $('pick'), keep = chosen;
+    pick.innerHTML = sessions.map(s => '<option>' + s.start + '</option>').join('');
+    if (pinned && keep && sessions.some(s => s.start === keep)) pick.value = keep;  // otherwise follow the newest session
+    chosen = pick.value;
+    const s = sessions.find(x => x.start === chosen);
+    if (!s) { $('status').textContent = 'No charge-watch readings yet.'; draw(); return }
+    const age = Date.now() / 1000 - s.points[s.points.length - 1].e;
+    $('status').innerHTML = 'Session ' + s.start + ' to ' + s.end + ', ' + s.points.length + ' samples. ' +
+      (age < 120 ? 'Live (last reading ' + Math.round(age) + ' s ago).' : '<span class="stale">Last reading ' + Math.round(age / 60) + ' min ago.</span>');
+    draw();
+  } catch (e) { $('status').innerHTML = '<span class="stale"></span>'; $('status').firstChild.textContent = 'charge.json failed: ' + e }
+}
+$('pick').onchange = () => { chosen = $('pick').value; pinned = chosen !== (sessions[0] || {}).start; draw() };
+window.onresize = draw;
+load(); setInterval(load, 10000);
+</script>
+</body></html>

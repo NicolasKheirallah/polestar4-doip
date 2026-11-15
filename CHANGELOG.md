@@ -3,6 +3,12 @@
 Owned by the project; newest first. This file records tool, catalogue and documentation changes —
 observations about the car belong in docs/findings.md and DISCOVERIES.md, not here.
 
+## 2026-11-15 — private status site: charge sessions
+
+- `web/charge.html` and `/charge.json` (`web/server.py`): charge sessions from the charge watch logs (SoC, pack power, charge
+  limit, pack temperatures, cell-group spread), split on 15-minute gaps; failed or short reads clear the value instead of
+  repeating the last one. Nav link on every page. Tests in `tool/tests/test_web_server.py`.
+
 ## 2026-11-15 — catalogue and hazards from the long drive
 
 - `catalogue/hazards.yaml`: nine `1251` (head-up display) DIDs as caution (continuous polling while driving knocks out Pilot Assist).

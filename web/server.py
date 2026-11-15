@@ -1,4 +1,5 @@
 """Static pages from /srv plus /live.json: values and history from the newest watch log."""
+import datetime
 import glob
 import json
 import os
@@ -70,6 +71,100 @@ def matrix_logs():
     return out
 
 
+CHARGE_LINE = re.compile(r"^(\d{4}-\d\d-\d\dT\d\d:\d\d:\d\d(?:[+-]\d\d:\d\d)?) 1635:(4801|4802|497C|489C|EE83|DA31) (.*)$")
+CHARGE_GAP = 900  # s between readings that starts a new charge session
+CHARGE_LOG = re.compile(r"watch-(?:.*-)?charge(?:-.*)?\.log$")  # charge watches, not chargelid/discharge
+CHARGE_HEX = {"4801": 4, "4802": 4, "497C": 4, "489C": 8, "EE83": 112, "DA31": 440}  # full-length values only
+charge_cache = {}  # path -> ((mtime, size), [[epoch, did, hex]])
+
+
+def u16s(h, count):
+    """Big-endian u16 words from hex, dropping 0xFFFF padding."""
+    return [w for w in (int(h[i:i + 4], 16) for i in range(0, min(len(h), count * 4) - 3, 4)) if w != 0xFFFF]
+
+
+def charge_point(cur):
+    """One sample from the latest value of each DID (catalogue decodes: hv_soc, pack_current, pack_voltage,
+    charge_power_limit_kw, pack_temperatures, cell_group_voltages)."""
+    p = {}
+    if "4801" in cur:
+        p["soc"] = round(int(cur["4801"][:4], 16) * 0.002, 2)
+    if "4802" in cur:
+        p["amps"] = round(int(cur["4802"][:4], 16) * 0.1 - 1638.4, 1)
+    if "497C" in cur:
+        p["volts"] = round(int(cur["497C"][:4], 16) * 0.01, 1)
+    if "amps" in p and "volts" in p:
+        p["kw"] = round(-p["amps"] * p["volts"] / 1000, 1)  # + = into the pack
+    if "489C" in cur:
+        p["limit"] = round(int(cur["489C"][:8], 16) * 0.000001, 1)
+    t = u16s(cur.get("EE83", ""), 28)
+    if t:
+        p["tmin"], p["tmax"] = round(min(t) * 0.01 - 50, 1), round(max(t) * 0.01 - 50, 1)
+    c = u16s(cur.get("DA31", ""), 110)
+    if c:
+        p["cmin"], p["cmax"] = min(c) / 1000, max(c) / 1000
+    return p
+
+
+def charge_sessions():
+    """Charge sessions from every charge watch log, newest first: [{start, end, points: [{t, soc, kw, ...}]}].
+
+    Watch logs record changes only, so a point is emitted at every charge-DID line once a current (4802) has been seen,
+    from the latest value of each DID; lines in the same second share one point."""
+    reads = []
+    for p in sorted(glob.glob(W + "/runs/*/watch-*charge*.log")):
+        if not CHARGE_LOG.search(os.path.basename(p)):
+            continue
+        try:
+            st = os.stat(p)
+            mt = (st.st_mtime, st.st_size)
+            if p not in charge_cache or charge_cache[p][0] != mt:
+                rows = []
+                with open(p, errors="replace") as f:
+                    for ln in f:
+                        m = CHARGE_LINE.match(ln.rstrip("\n"))
+                        if not m:
+                            continue
+                        rest = m.group(3)
+                        new = rest.rsplit("-> ", 1)[1] if "-> " in rest else rest
+                        try:
+                            ep = datetime.datetime.fromisoformat(m.group(1)).timestamp()  # honours the logged offset
+                        except ValueError:
+                            continue
+                        h = re.match(r"[0-9a-f]+", new)
+                        ok = h is not None and len(h.group()) >= CHARGE_HEX[m.group(2)]
+                        rows.append([ep, m.group(2), h.group() if ok else None])  # None: failed or short read
+                charge_cache[p] = (mt, rows)
+        except OSError:
+            continue
+        reads += charge_cache[p][1]
+    reads.sort(key=lambda r: r[0])
+    sessions, cur, last = [], {}, None
+    for ep, did, h in reads:
+        if last is None or ep - last > CHARGE_GAP:
+            sessions.append([])
+            cur = {}
+        last = ep
+        if h is None:
+            cur.pop(did, None)  # a failed read must not leave the old value in use; the next point shows the gap
+        else:
+            cur[did] = h
+        if "4802" in cur:
+            pt = charge_point(cur)
+            pt["t"] = time.strftime("%H:%M:%S", time.localtime(ep))
+            pt["e"] = ep
+            if sessions[-1] and sessions[-1][-1]["e"] == ep:
+                sessions[-1][-1] = pt
+            else:
+                sessions[-1].append(pt)
+    out = []
+    for s in sessions:
+        if s:
+            out.append({"start": time.strftime("%Y-%m-%d %H:%M", time.localtime(s[0]["e"])),
+                        "end": time.strftime("%H:%M:%S", time.localtime(s[-1]["e"])), "points": s})
+    return out[::-1]
+
+
 def numeric(val, extra):
     if extra:
         m = NUM.search(extra)
@@ -138,9 +233,13 @@ class H(SimpleHTTPRequestHandler):
             with matrix_lock:  # its own lock: a cold parse of every log must not stall /live.json
                 body = json.dumps({"logs": matrix_logs()}).encode()
             return self.send_body(body, "application/json")
-        if self.path.split("?")[0] == "/matrix.html":
+        if self.path.split("?")[0] == "/charge.json":
+            with matrix_lock:
+                body = json.dumps({"sessions": charge_sessions()}).encode()
+            return self.send_body(body, "application/json")
+        if self.path.split("?")[0] in ("/matrix.html", "/charge.html"):
             try:
-                with open(W + "/web/matrix.html", "rb") as f:
+                with open(W + "/web" + self.path.split("?")[0], "rb") as f:
                     return self.send_body(f.read(), "text/html; charset=utf-8")
             except OSError:
                 self.send_error(404)
