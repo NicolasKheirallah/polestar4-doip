@@ -8,7 +8,7 @@
 - {addr: "1015", label: WAM, role: "wireless access (key/phone); also holds the parking sensor distances (B112-B121)", status: unverified}
 - {addr: "1023", label: WCM, role: wireless phone charger (part 6608017285), status: unverified}
 - {addr: "1201", label: IHU, role: infotainment (park D938), status: confirmed}
-- {addr: "1202", label: TVM, role: camera/vision, status: unverified}
+- {addr: "1202", label: TVM, role: camera/vision, status: unverified, note: "same physical unit as 1201 (same core part and serial)"}
 - {addr: "1212", label: AUD, role: audio amplifier, status: unverified}
 - {addr: "1213", label: RSEM, role: rear seat entertainment, status: unverified}
 - {addr: "1251", label: HUD, role: head-up display, status: unverified, note: answers a physical address scan but not the 1FFF broadcast}
@@ -27,7 +27,7 @@
 - {addr: "1650", label: CDD, role: charger and charge inlet, status: confirmed}
 - {addr: "1656", label: "?", role: "?", status: unknown}
 - {addr: "1670", label: PSCM, role: power steering, status: unverified}
-- {addr: "1672", label: SAS, role: "steering angle (3019 also on 1670/1676; a US owner reads F80A CHCM, chassis controller)", status: confirmed}
+- {addr: "1672", label: SAS, role: "steering angle (3019 also on 1670/1676; a US owner reads F80A CHCM, chassis controller)", status: confirmed, note: "same physical unit as 1633 (same core part and serial)"}
 - {addr: "1675", label: "?", role: "?", status: unknown}
 - {addr: "1676", label: "?", role: "?", status: unknown, note: "same software part numbers and placeholder serial as 1670; second steering unit guess"}
 - {addr: "1701", label: BSCM, role: "brake system (F80A reads BSCM-BrakeSystem, 2026-11-12)", status: confirmed}

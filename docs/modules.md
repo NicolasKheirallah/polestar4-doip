@@ -10,7 +10,7 @@ All 43 modules that answer on this car, with the answering DIDs listed in `did-m
 | `1015` | Wireless access / digital key (UWB, BLE, NFC)? | software names (`PAS_VE`, `…CCA…`, `…CCR…`) |
 | `1023` | Wireless phone charger | part `6608017285` is sold as "control unit for wireless charging" (the usual label for this address is BNCM, which looks wrong here) |
 | `1201` | Infotainment | park signal `D938` |
-| `1202` | Camera / vision | guess |
+| `1202` | Camera / vision | guess; a second address on the infotainment unit (same core part and serial as `1201`) |
 | `1212` | Audio amplifier | guess |
 | `1213` | Rear-seat entertainment | guess |
 | `1251` | Head-up display | guess; answers physical addressing only, not `1FFF` |
@@ -28,7 +28,7 @@ All 43 modules that answer on this car, with the answering DIDs listed in `did-m
 | `1650` | Charger / inlet | charge signals |
 | `1656` | Unknown, HV/12 V power path | `4947`/`D110` read 14.0–14.2 V (12 V rail, as on `1635`); hardware `HX1100`; DC-DC converter? |
 | `1670` | Power steering | steering angle `3019` |
-| `1672` | Steering angle sensor? | `3019` (also answers on `1670`/`1676`); a US owner reads F80A `CHCM` (chassis controller): unverified here |
+| `1672` | Steering angle sensor? | `3019` (also answers on `1670`/`1676`); a US owner reads F80A `CHCM` (chassis controller): unverified here; one unit with the gear stalk `1633` (same core part and serial) |
 | `1675` | Unknown chassis module | config string `GE60_P03_M10_…`; answers OBD speed `F40D` (2026-11-12) |
 | `1676` | Second (redundant) steering controller? | same 44 DIDs and software part numbers as `1670` |
 | `1701` | Brake system (BSCM) | `F80A` reads `BSCM-BrakeSystem` (2026-11-12); config `BRP417EA`; shares 29 DIDs with `1631`; brake pressure/pedal candidates `FE08`, `D905`/`D906` |

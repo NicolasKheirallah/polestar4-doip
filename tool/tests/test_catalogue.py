@@ -1,9 +1,10 @@
 import os
+import re
 
 import pytest
 import yaml
 
-from p4doip import decode
+from p4doip import decode, privacy
 
 from conftest import REPO
 
@@ -174,3 +175,62 @@ def test_dtc_registry_rejects_bad_code(tmp_path):
     p.write_text('- {dtc: "123", name: "short"}\n')
     with pytest.raises(ValueError, match="6-hex"):
         decode.load_dtcs(str(p))
+
+
+with open(os.path.join(REPO, "catalogue", "hardware.yaml")) as f:
+    HARDWARE = yaml.safe_load(f)
+
+
+def test_hardware_covers_every_module_once():
+    addrs = [m["addr"] for m in HARDWARE["modules"]]
+    assert sorted(addrs) == sorted(m["addr"] for m in MODULES)
+
+
+def test_hardware_fields_are_part_numbers_only():
+    # Part numbers are shared by every car of a build; serials (F18C and friends) are per-car and must never land here.
+    allowed = {"addr", "label", "core", "delivery", "core_80", "f18a", "box", "part", "note"}
+    for m in HARDWARE["modules"]:
+        assert set(m) <= allowed, m["addr"]
+        assert re.fullmatch(r"\d{10} [A-Z]", m["core"]) and re.fullmatch(r"\d{10} [A-Z]", m["delivery"]), m["addr"]
+        assert re.fullmatch(r"\d{8} [A-Z]{2}", m["core_80"]), m["addr"]
+    for c in HARDWARE["components"]:
+        assert set(c) == {"name", "detail", "conf", "source"}, c["name"]
+
+
+def test_hardware_has_no_bare_eight_digit_numbers():
+    # ECU serials (F18C) are 8 digits; the only 8-digit numbers allowed are core_80 parts ("80012345 AA") and the
+    # placeholder serials named in the header comment.
+    with open(os.path.join(REPO, "catalogue", "hardware.yaml")) as f:
+        text = f.read()
+    found = set(re.findall(r"(?<![\d,])\d{8}(?![\d,]| [A-Z]{2}\b)", text))
+    assert found <= {"12345678", "99999999"}
+
+
+def test_hardware_shared_units_name_both_addresses():
+    boxes = {}
+    for m in HARDWARE["modules"]:
+        if "box" in m:
+            boxes.setdefault(m["box"], set()).add(m["addr"])
+    assert boxes and all(len(members) >= 2 for members in boxes.values())
+    assert boxes and all(set(b.split("+")) == members for b, members in boxes.items())
+    by_addr = {m["addr"]: m for m in HARDWARE["modules"]}
+    for members in boxes.values():  # one physical unit carries one hardware part
+        assert len({(by_addr[a]["core"], by_addr[a]["core_80"]) for a in members}) == 1, members
+
+
+PART = re.compile(r"\b(?:66|88)\d{8}\b")  # Geely-format catalogue part numbers, shared by every car of a build
+
+
+def test_hardware_free_text_hides_no_identifiers():
+    # Free-text fields must pass privacy.mask once catalogue part numbers are set aside: a pasted serial, VIN,
+    # TPMS ID or phone number would be changed by it.
+    texts = [str(m[k]) for m in HARDWARE["modules"] for k in ("f18a", "part", "note") if k in m]
+    texts += [str(c[k]) for c in HARDWARE["components"] for k in ("name", "detail", "source")]
+    for t in texts:
+        bare = PART.sub("", t)
+        assert privacy.mask(bare) == bare, t
+
+
+def test_hardware_components_are_sourced():
+    for c in HARDWARE["components"]:
+        assert c["source"] and c["conf"] in ("C", "P", "doc", "owner"), c["name"]

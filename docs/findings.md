@@ -47,7 +47,7 @@ What has been learned about one car, module by module, including leads that are 
 
 ## 1202 Camera / vision
 
-- **What it is**: label guess; not checked. 21 DIDs.
+- **What it is**: label guess; not checked. 21 DIDs. A second diagnostic address on the infotainment unit (`1201`): same core and delivery part numbers and the same ECU serial, with its own seven-entry software list (2026-11-15, from the 2026-11-10/11 scans).
 
 ## 1212 Audio amplifier
 
@@ -124,7 +124,7 @@ What has been learned about one car, module by module, including leads that are 
 
 ## 1633 Gear selector stalk
 
-- **What it is**: the column gear stalk (EGSM label). 51 DIDs. Reports stalk movement only, not the selected gear.
+- **What it is**: the column gear stalk (EGSM label). 51 DIDs. One physical unit with `1672` (see there). Reports stalk movement only, not the selected gear.
 - **Leads**: `D914`, `D915`, `D919`, `D920` go `01` -> `04` while the stalk is pushed (back within ~2 s); `DA02`/`DA03` go `01` -> `03` while held down (the N gesture); `DA00`/`DA01` jitter by a count or two (raw positions?). P, one test. The push and hold channels are in the catalogue as `stalk_push_*` / `stalk_hold_*`.
 - **Not found**: the wiper button on the stalk (single wipe, washer) moved nothing here.
 
@@ -171,7 +171,7 @@ What has been learned about one car, module by module, including leads that are 
 
 ## 1672 Steering angle
 
-- **What it is**: SAS label; a US owner's `F80A` reads "chassis controller" (issue #2). 41 DIDs. The steering test does not single it out, since `1670` and `1676` also answer `3019`.
+- **What it is**: SAS label; a US owner's `F80A` reads "chassis controller" (issue #2). 41 DIDs. Same physical unit as the gear stalk module `1633`: same core and delivery part numbers and the same ECU serial, different software (2026-11-15, from the 2026-11-11 scans). So the steering angle sensor and the stalk probably share one column unit (inference: the SAS role rests on the label). The steering test does not single it out, since `1670` and `1676` also answer `3019`.
 - **Signals**: `steering_angle` (`3019`, signed, left positive, ~0.0554 °/unit by eye, locks about ±430 °, ~2.4 turns; P).
 - **Leads**: `301A` moves while steering (meaning not established). `D112` is module supply voltage (x 0.08 V), as on `1C01`.
 

@@ -1,0 +1,85 @@
+# Hardware on this Polestar 4: control units by diagnostic address, then physical components.
+# Part numbers are catalogue numbers shared by every car of the same build, not per-car identifiers.
+# Never add serials (F18C, F13F, F192, F198), the VIN or TPMS sensor IDs here.
+#
+# modules: read from runs/*/scan-*.jsonl (2026-11-10 to 2026-11-12), the latest ok read of each DID.
+#   label:    usual short name from catalogue/modules.yaml (a guess unless that file says confirmed).
+#   core:     F1AA, "ECU core assembly part number" (Geely numbering, 10 digits + revision): the hardware.
+#   delivery: F1AB, "ECU delivery assembly part number" (Geely numbering): hardware plus its software as shipped.
+#   core_80:  F12A, the same core assembly in the older 8-digit numbering.
+#   f18a:     F18A text where printable (ISO name systemSupplierIdentifier; 100057 on all seven door and seat units).
+#   box:      addresses that are one physical unit: same core part and the same real ECU serial (F18C; not the
+#             placeholder 12345678/99999999 some units return) on both addresses, with different software.
+# The F1AA/F1AB/F12A names are the ones used on related Volvo/Geely cars; the 10-digit format matches
+# part 6608017285, which is sold as "control unit for wireless charging" and sits in 1023's F1BB.
+modules:
+  - {addr: "1001", label: "VCM", core: "6608286997 A", delivery: "6608288544 A", core_80: "80034546 AA"}
+  - {addr: "1011", label: "TEM", core: "6608141149 A", delivery: "6608226966 A", core_80: "80016544 AA", f18a: "111003"}
+  - {addr: "1012", label: "DMM", core: "6608078471 A", delivery: "6608030450 A", core_80: "80012032 AA"}
+  - {addr: "1015", label: "WAM", core: "6608172950 A", delivery: "6608262501 A", core_80: "80018877 AA", f18a: "210309"}
+  - {addr: "1023", label: "WCM", core: "6608217179 A", delivery: "6608217414 A", core_80: "80025880 AA", f18a: "MARQUARDT", part: "6608017285 (F1BB; sold as control unit for wireless charging)"}
+  - {addr: "1201", label: "IHU", core: "6608154964 D", delivery: "6608404040 A", core_80: "80016689 AD", box: "1201+1202"}
+  - {addr: "1202", label: "TVM", core: "6608154964 D", delivery: "6608404040 A", core_80: "80016689 AD", box: "1201+1202"}
+  - {addr: "1212", label: "AUD", core: "6608144873 A", delivery: "6608194830 B", core_80: "80016525 AA"}
+  - {addr: "1213", label: "RSEM", core: "6608095838 A", delivery: "6608130139 A", core_80: "80013776 AA"}
+  - {addr: "1251", label: "HUD", core: "6608158520 A", delivery: "6608130135 A", core_80: "80016878 AA", f18a: "512035"}
+  - {addr: "1301", label: "ADCU3", core: "6608138459 A", delivery: "6608274610 A", core_80: "80016126 AA"}
+  - {addr: "1314", label: "DVR 12V", core: "6608116483 A", delivery: "6608153219 A", core_80: "80014385 AA"}
+  - {addr: "1316", label: "?", core: "6608445312 A", delivery: "6608445525 A", core_80: "80048580 AA"}
+  - {addr: "1317", label: "?", core: "6608445312 A", delivery: "6608445525 A", core_80: "80048580 AA"}
+  - {addr: "1344", label: "FLR4", core: "6608116989 A", delivery: "6608116992 B", core_80: "80013788 AA", f18a: "512013"}
+  - {addr: "1601", label: "VDDM", core: "6608412039 A", delivery: "6608411834 A", core_80: "80046410 AA", f18a: "512188"}
+  - {addr: "1614", label: "SUM", core: "6608101552 A", delivery: "6608101584 A", core_80: "80012257 AA"}
+  - {addr: "1615", label: "SCL", core: "8888921555 B", delivery: "8893949919 G", core_80: "32246210 AB"}
+  - {addr: "1631", label: "BCM", core: "8895348749 A", delivery: "8894757214 D", core_80: "80012345 AA", note: "its core_80 value looks like a placeholder, as does its serial"}
+  - {addr: "1633", label: "EGSM", core: "6608093471 A", delivery: "8893438999 D", core_80: "80011749 AA", box: "1633+1672"}
+  - {addr: "1635", label: "BECM", core: "6608158887 A", delivery: "6608148599 A", core_80: "80037497 AA", f18a: "593001"}
+  - {addr: "1637", label: "IEM", core: "6608106313 A", delivery: "6608114859 A", core_80: "80013907 AA"}
+  - {addr: "1650", label: "CDD", core: "6608122444 B", delivery: "6608333690 A", core_80: "80017607 AB"}
+  - {addr: "1656", label: "?", core: "6608177153 A", delivery: "6608177203 B", core_80: "80019635 AA", f18a: "755027"}
+  - {addr: "1670", label: "PSCM", core: "6608192842 A", delivery: "6608193161 A", core_80: "80020464 AA", f18a: "250043"}
+  - {addr: "1672", label: "SAS", core: "6608093471 A", delivery: "8893438999 D", core_80: "80011749 AA", box: "1633+1672"}
+  - {addr: "1675", label: "?", core: "6608138272 A", delivery: "6608138048 A", core_80: "80016120 AA"}
+  - {addr: "1676", label: "?", core: "6608192838 A", delivery: "6608193161 A", core_80: "80020467 AA", f18a: "250043"}
+  - {addr: "1701", label: "BSCM", core: "6608200097 A", delivery: "6608201462 A", core_80: "80020858 AA"}
+  - {addr: "1A01", label: "CEM", core: "6608142846 A", delivery: "6608142902 A", core_80: "80018783 AA"}
+  - {addr: "1A11", label: "CCM", core: "8896880284 A", delivery: "8892888175 B", core_80: "80011880 AA"}
+  - {addr: "1A12", label: "DDM", core: "8896726896 A", delivery: "6608090498 B", core_80: "80012745 AA", f18a: "100057"}
+  - {addr: "1A13", label: "PDM", core: "6608031623 A", delivery: "6608031668 B", core_80: "80006391 AA", f18a: "100057"}
+  - {addr: "1A15", label: "POT", core: "8896642977 A", delivery: "6608087320 A", core_80: "80010806 AA"}
+  - {addr: "1A21", label: "RLDM", core: "6608031622 A", delivery: "6608031667 B", core_80: "80006396 AA", f18a: "100057"}
+  - {addr: "1A22", label: "RRDM", core: "6608031621 A", delivery: "6608031666 B", core_80: "80006401 AA", f18a: "100057"}
+  - {addr: "1A27", label: "SMD", core: "8896726401 A", delivery: "6608092283 A", core_80: "80011787 AA", f18a: "100057"}
+  - {addr: "1A28", label: "SMP", core: "8896726401 A", delivery: "6608092283 A", core_80: "80011787 AA", f18a: "100057"}
+  - {addr: "1A29", label: "SMB", core: "6608178109 A", delivery: "6608176778 A", core_80: "80019179 AA", f18a: "100057", note: "delivery part is listed by a parts shop as a Polestar 4 control unit (2026-11-13 search)"}
+  - {addr: "1A30", label: "ILCM", core: "6608160744 A", delivery: "6608160771 A", core_80: "80018908 AA"}
+  - {addr: "1BB3", label: "HCML", core: "8897232850 A", delivery: "8897232820 C", core_80: "31345594 AA"}
+  - {addr: "1BB4", label: "HCMR", core: "8897232850 A", delivery: "8897232820 C", core_80: "31345594 AA"}
+  - {addr: "1C01", label: "SRS", core: "6608106198 A", delivery: "6608089887 A", core_80: "80012364 AA"}
+
+# components: physical parts known from reads, behaviour and published sources.
+#   conf: C/P as in signals.yaml for what was seen on this car; "doc" = from a published source only; "owner" = told by the owner.
+components:
+  - {name: "Rear drive motor", detail: "TZ220XSA02, permanent-magnet synchronous, 200 kW, 343 Nm", conf: doc, source: "Polestar 4 UK owner's manual"}
+  - {name: "Front drive motor", detail: "Dual-motor car; disconnects and stops about 9 s after selecting Range, turns all the time in Performance (1601:E3E8)", conf: C, source: "2026-11-15 drive"}
+  - {name: "Motor speed limit", detail: "16,500 rpm for TZ220XSA02 in the Smart #1 manual; this car reaches about 82.8 rpm per km/h, so about 11.6-11.9:1 overall", conf: P, source: "Smart #1 manual; 2026-11-15 drive"}
+  - {name: "Front motor controller", detail: "1631 (probable): vehicle speed, active only when the front motor drives", conf: P, source: "docs/findings.md"}
+  - {name: "Rear inverter / e-machine", detail: "1637", conf: P, source: "docs/findings.md"}
+  - {name: "HV battery", detail: "110 cell-group voltages (1635:DA31, EE19 = 110), 28 temperature sensors (EE83, EE20 = 28); 242.73 Ah rated (DA06), 241.4 Ah per 100 % SoC measured", conf: C, source: "2026-11-15 DC charge"}
+  - {name: "12 V supply", detail: "14.0-14.2 V with the car awake (1656:4947, D110); 1656 may be the DC-DC converter (guess, hardware string HX1100)", conf: P, source: "docs/findings.md"}
+  - {name: "Charge inlet", detail: "1650: inlet LEDs and lid (EE32)", conf: C, source: "docs/findings.md"}
+  - {name: "Driver-assistance computer", detail: "1301, firmware names P417_EU and GAS52; seven camera entries (D921-D927), four camera types", conf: P, source: "docs/findings.md"}
+  - {name: "Front radar", detail: "1344 (label only)", conf: P, source: "catalogue/modules.yaml"}
+  - {name: "Corner units 1316/1317", detail: "same hardware part 6608445312 as a left/right pair; radar guess unconfirmed", conf: P, source: "docs/findings.md"}
+  - {name: "Parking sensors", detail: "10 distance channels on 1015 (B112-B121, cm), one per sensor: 4 front, 6 rear", conf: P, source: "2026-11-14 parked tests"}
+  - {name: "Blind-spot lights", detail: "in the door mirrors, driven by 1A13 (left) and 1A12 (right), DID 4003", conf: C, source: "2026-11-15 drive"}
+  - {name: "Headlamps", detail: "1BB3 left, 1BB4 right, same part; 32 individually controlled pixel LEDs per lamp; 1BB3:7022 holds 32 segment brightness bytes", conf: doc, source: "Polestar safety page; docs/findings.md"}
+  - {name: "Rear-view camera mirror", detail: "Coupe body with no rear window", conf: owner, source: "docs/findings.md"}
+  - {name: "Driver monitoring camera", detail: "1012", conf: P, source: "catalogue/modules.yaml"}
+  - {name: "Head-up display", detail: "1251; continuous polling knocks out Pilot Assist (catalogue/hazards.yaml)", conf: P, source: "2026-11-15 drive"}
+  - {name: "Dash camera", detail: "1314 (label only)", conf: P, source: "catalogue/modules.yaml"}
+  - {name: "Wireless phone charger", detail: "1023, supplier string MARQUARDT (F18A), system name BNCM (F197)", conf: P, source: "scan 2026-11-11"}
+  - {name: "Keyless entry / phone as key", detail: "1015, system name 417_CCR_TT_V1.25 (F197)", conf: P, source: "scan 2026-11-11"}
+  - {name: "TPMS", detail: "four wheel sensors whose IDs sit on the CEM (1A01:281F, not published); pressures not found", conf: P, source: "docs/findings.md"}
+  - {name: "Tyres", detail: "255/50 R20", conf: owner, source: "owner, 2026-11-15"}
+  - {name: "Rear track", detail: "1,710-1,716 mm depending on tyre", conf: doc, source: "Polestar 4 owner's manual"}

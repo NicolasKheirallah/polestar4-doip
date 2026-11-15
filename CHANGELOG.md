@@ -3,6 +3,12 @@
 Owned by the project; newest first. This file records tool, catalogue and documentation changes —
 observations about the car belong in docs/findings.md and DISCOVERIES.md, not here.
 
+## 2026-11-15 — hardware catalogue
+
+- `catalogue/hardware.yaml`: part numbers per module (`F1AA`, `F1AB`, `F12A`, printable `F18A`), shared units, physical components. No serials.
+- `catalogue/modules.yaml`, `docs/modules.md`, `docs/findings.md`: `1202` shares a unit with `1201`, `1672` with `1633`. README lists the new file.
+- `tool/tests/test_catalogue.py`: the hardware file covers every module once, every address is a known module, and no serial-type field appears.
+
 ## 2026-11-15 — motor speed unit
 
 - `catalogue/signals.yaml`: `motor_speed_front`/`_rear` (`1601:E3E8`/`E3E9`) carry a provisional rpm unit (evidence in the comment).

@@ -6,6 +6,14 @@ Confidence follows `catalogue/signals.yaml`: **C** = the same change seen at lea
 
 <!-- New entries go directly below this line, newest first. The heading must be "## <version> - <title>". -->
 
+## 2026.11.15.3 - Hardware catalogue
+
+Offline, from the identification reads in the 2026-11-10 to 2026-11-12 full scans.
+
+- New `catalogue/hardware.yaml`: hardware and delivery part numbers for all 43 modules, and the physical components known so far with sources.
+- Two pairs of addresses are each one physical unit (same part numbers and the same ECU serial, different software): `1201` infotainment with `1202` camera/vision, and `1633` gear stalk with `1672` steering angle.
+- Shared parts: the two seats (`1A27`/`1A28`), the two headlamps, and the `1316`/`1317` pair. Seven door and seat units carry the same F18A code (`100057`), probably one supplier. The wireless charger names Marquardt.
+
 ## 2026.11.15.2 - Motor speed in rpm and the gear ratio
 
 Offline, from the 2026-11-15 drive data and two owner's manuals.

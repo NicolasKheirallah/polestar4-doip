@@ -6,6 +6,7 @@ Read-only mapping of a Polestar 4's diagnostic data over DoIP (ISO 13400) throug
 
 - [`catalogue/signals.yaml`](catalogue/signals.yaml): decoded signals (module, DID, encoding, real examples), each marked C (confirmed) or P (provisional)
 - [`catalogue/modules.yaml`](catalogue/modules.yaml): every module address that answers, with a label and status confirmed / unverified / unknown
+- [`catalogue/hardware.yaml`](catalogue/hardware.yaml): part numbers for every module and the physical components known so far
 - [`catalogue/dids.yaml`](catalogue/dids.yaml): DID names and families (ISO 14229 identity names, common blocks)
 - [`catalogue/hazards.yaml`](catalogue/hazards.yaml): reads that upset a module, as `block` or `caution`, with the evidence
 - [`catalogue/dtc.yaml`](catalogue/dtc.yaml): named diagnostic trouble codes (empty until one is established)
@@ -30,6 +31,7 @@ Read-only mapping of a Polestar 4's diagnostic data over DoIP (ISO 13400) throug
 | `catalogue/signals.yaml` | Decoded signals with their encoding and real examples the tests check. Confidence C = the same change seen at least twice in both directions; P = anything less |
 | `catalogue/modules.yaml` | The 43 modules that answer, with a label and status confirmed / unverified / unknown |
 | `catalogue/hazards.yaml` | Blocked and cautioned reads; the tool loads it before every car-facing command |
+| `catalogue/hardware.yaml` | Hardware: core and delivery part numbers per module, which addresses share a unit, physical components with sources |
 | `catalogue/dids.yaml` | DID registry: names, families, which values are per-car (masked) |
 | `catalogue/dtc.yaml` | DTC code to name mappings (empty until established) |
 | `docs/modules.md` | Module map: what each module is and the evidence |
