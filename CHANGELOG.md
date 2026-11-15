@@ -3,6 +3,10 @@
 Owned by the project; newest first. This file records tool, catalogue and documentation changes —
 observations about the car belong in docs/findings.md and DISCOVERIES.md, not here.
 
+## 2026-11-15 — motor speed unit
+
+- `catalogue/signals.yaml`: `motor_speed_front`/`_rear` (`1601:E3E8`/`E3E9`) carry a provisional rpm unit (evidence in the comment).
+
 ## 2026-11-15 — private status site: charge sessions
 
 - `web/charge.html` and `/charge.json` (`web/server.py`): charge sessions from the charge watch logs (SoC, pack power, charge

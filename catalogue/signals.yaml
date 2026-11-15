@@ -245,9 +245,12 @@
 # fits the front motor disconnect in Range power delivery. Decoded with the 20000 offset removed (0 = stopped).
 # 2026-11-15 (C, two switches each way while cruising, 17:07-17:20): in Performance E3E8 turned on every read; ~9 s after switching to Range
 # it fell to 4e20 and stayed there. Whole day above 60 km/h: Range 136/438 reads turning, Performance 1411/1411. Both motors ~82.8 counts per km/h.
-- {id: motor_speed_front, module: "1601", did: "E3E8", name: "Front motor speed (counts; 0 = stopped or disconnected, as when cruising in Range)", type: u, add: -20000, confidence: C,
+# Unit rpm is P (the motor behaviour above is C): 82.85 counts per km/h gives about 16,570 at the 200 km/h published top speed, within 0.5 % of
+# the 16,500 rpm maximum the Smart #1 manual (HX11, Malaysia, 2024-06, Technical data) gives for motor TZ220XSA01/02; Polestar's UK manual names
+# the Polestar 4 rear motor TZ220XSA02. With 255/50 R20 tyres that is an overall reduction of about 11.6-11.9:1 (inference).
+- {id: motor_speed_front, module: "1601", did: "E3E8", name: "Front motor speed (0 = stopped or disconnected, as when cruising in Range; unit rpm is provisional)", type: u, add: -20000, unit: " rpm", confidence: C,
    examples: [{raw: "4e20", value: 0}, {raw: "5dd6", value: 4022}]}
-- {id: motor_speed_rear, module: "1601", did: "E3E9", name: "Rear motor speed? (counts, 0 = stopped)", type: u, add: -20000, confidence: P,
+- {id: motor_speed_rear, module: "1601", did: "E3E9", name: "Rear motor speed? (0 = stopped; unit rpm is provisional)", type: u, add: -20000, unit: " rpm", confidence: P,
    examples: [{raw: "4e20", value: 0}, {raw: "5e56", value: 4150}]}
 # Longitudinal acceleration: about 128 counts per m/s2 against the derivative of D003 (r 0.75-0.84). SIGN CORRECTED 2026-11-15: + = speeding up
 # (r with dv/dt +0.44 on 11-12, +0.82 on 11-13 for both modules, +0.76/+0.74 on 11-15, n up to 7,033). Parked it reads a fixed

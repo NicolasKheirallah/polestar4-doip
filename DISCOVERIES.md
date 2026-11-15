@@ -6,6 +6,18 @@ Confidence follows `catalogue/signals.yaml`: **C** = the same change seen at lea
 
 <!-- New entries go directly below this line, newest first. The heading must be "## <version> - <title>". -->
 
+## 2026.11.15.2 - Motor speed in rpm and the gear ratio
+
+Offline, from the 2026-11-15 drive data and two owner's manuals.
+
+**Signals**
+- `1601:E3E8`/`E3E9` read motor speed in rpm (P for the unit). Both motors run at about 82.8 rpm per km/h, so at the published 200 km/h top speed they would reach about 16,570 rpm. The [Polestar 4 UK manual](https://www.polestar.com/uk/manual/polestar-4/2025/article/0ed816eed33d98cac0a8cc377bc12bc7-241d345d2bf41f36c0a8b0973d024aff-8664b2fa77a7e089c0a8296870d1a409) names the rear motor TZ220XSA02; the [Smart #1 manual](https://my.smart.com/wp-content/uploads/2024/06/HX11-Digital-User-Manual-Malaysia-20240607.pdf) (Technical data) gives TZ220XSA01/02 a 16,500 rpm maximum, 200 kW peak and 343 Nm. The two agree within 0.5 %, which fits a top speed set by the motor's limit (inference).
+
+**Leads**
+- Overall reduction about 11.6-11.9:1 on 255/50 R20 tyres (no published figure; depends on the loaded tyre radius).
+- Polestar describes a clutch that disconnects the front motor for efficiency, which matches the front motor winding down in Range.
+- Module `1656` reports `HX1100`; `HX11` is the Smart #1 project code (a shared part, probably).
+
 ## 2026.11.15 - Long drive: wheel corners, yaw, drive modes, blind spot, battery capacity, a HUD hazard
 
 A day-long drive (about 600 km, one DC charge) on 2026-11-15 with the scanner running throughout, a passenger calling out events, and short targeted watches.
