@@ -6,6 +6,38 @@ Confidence follows `catalogue/signals.yaml`: **C** = the same change seen at lea
 
 <!-- New entries go directly below this line, newest first. The heading must be "## <version> - <title>". -->
 
+## 2026.11.15 - Long drive: wheel corners, yaw, drive modes, blind spot, battery capacity, a HUD hazard
+
+A day-long drive (about 600 km, one DC charge) on 2026-11-15 with the scanner running throughout, a passenger calling out events, and short targeted watches.
+
+**New signals**
+- Wheel corners, `1601:E3E4`-`E3E7` (C): left front, right front, left rear, right rear. In tight turns both ways the outer front wheel was fastest and the inner rear slowest.
+- Range vs Performance (C): in Performance the front motor (`1601:E3E8`) turns all the time; about 9 s after switching to Range it stops and stays stopped while cruising. Two switches each way while driving.
+- Blind-spot lights (C): `1A13:4003` left and `1A12:4003` right, matched to cars alongside on each side; `32` lit after dark, `64` in daylight.
+- Yaw rate, `1614:D92D` byte 2 (P): signed degrees per second, + = turning left; it matches the yaw worked out from the rear wheel speeds and the 1,713 mm rear track to within about 5 % above 30 km/h. Byte 0 of the same DID is road speed in whole m/s (P).
+- `1635:EE14` counts mAh: over a 54 % DC charge it rose by as much as the integrated pack current (130.8 Ah).
+
+**Battery**
+- Capacity: 241.4 Ah per 100 % of `4801`, against 242.73 Ah rated: the BMS's own view, not an independent health test.
+- DC charge: up to 394 A at 27 %, about 300 A at 50 %, 166 A at 80 % when stopped by hand; the pack warmed from about 21 to 31 °C over the last 45 minutes before the charger (preconditioning), and reached 42 °C.
+- Pack resistance falls as it warms: about 52 mΩ below 10 °C, 35 mΩ at 10-20 °C, 31 mΩ at 20-30 °C.
+- Dash charge vs `4801`: 100 % shown at 96.1 %, 52 % at 51.4 %, 15 % at about 17.4 %. The dash is a rescaled figure.
+
+**Leads (not in the catalogue)**
+- Matrix headlamps in traffic: main beam stays on with one moving shaded block per lamp; full dips came at roundabouts, not with streams of oncoming cars. Polestar quotes 32 pixels per lamp, matching the 32 bytes of `7022`.
+- Phantom braking: three moments of brake pressure (`1701:FE08`) with the pedal at rest at motorway speed, each followed by a return to cruising speed; candidates for the system braking by itself, which the owner felt once or twice.
+- Pilot Assist on/off was not found; it needs a dedicated test.
+
+**Hazards**
+- **Continuous polling of the head-up display (`1251`) while driving makes Pilot Assist show as unavailable** until the reads stop. Three passes; the first also polled `1601:EE27`, the third polled only the HUD and still did it, and `EE27` is read in every drive watch without trouble. Single reads and one pass of all nine DIDs were harmless, a 10-second loop was enough. The nine DIDs are now caution in `catalogue/hazards.yaml`. Not yet tried parked.
+
+**Looked for, not found**
+- Tyre pressure: `1A01:42ED`/`42EE` answer while driving but stay flat all day as the tyres warm; `45B2`/`45C9` refuse even while driving.
+- Driver attention on `1012` (full scan, no new DIDs; nothing reacted to a yawn, hands off, mirror checks or a head turn). The speed limit shown in the car (not on the HUD DIDs). Live target data on the side radars `1316`/`1317`.
+
+**Corrections**
+- `2B11` on `1601` and `1701` is + = speeding up, not + = slowing (positive correlation with the change in speed on three drive days).
+
 ## 2026.11.14 - Parking sensors, drive mode, locks, seats, a second Mobileye hazard
 
 A long parked session on 2026-11-14 (P and stationary D, owner at the car), plus offline analysis of earlier Mobileye reads.

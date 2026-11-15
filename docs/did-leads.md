@@ -63,7 +63,6 @@ Decode rests on values seen on the car; no full payload hex in the docs (or labe
 | `1601` | `E406` | vehicle speed in whole km/h | findings.md:93 |
 | `1601` | `E467`,`E468` | axle speeds?: pair at `0x7F80` at rest, ~128 counts/km/h | findings.md:93 |
 | `1601` | `E46A` | total deceleration demand?: `0x4000` = none; stop lamps on at/above ~`0x4380` | findings.md:92; DISCOVERIES.md:31 |
-| `1614` | `D92D` | byte 0 speed in m/s; bytes 1-2 weak yaw/lateral candidates | findings.md:104, 280 |
 | `1635` | `4801` (second entry) | display SoC = (raw - 9.5) / (97.1 - 9.5) x 100; fits the point where 65 % was shown at 66.6 % raw, dash ticked 68 -> 67 at 68.9 raw | findings.md:130; DISCOVERIES.md:89 |
 | `1635` | `49F6`,`49F7` | energy used/remaining pair; sum always ~4460; unit unknown | findings.md:131; modules.md:47 |
 | `1635` | `496D`,`496B` | SOH? constant 10000 = 100.00 % (Polestar 2 scaling); tracking unproven | findings.md:134 |

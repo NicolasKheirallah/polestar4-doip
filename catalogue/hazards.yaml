@@ -30,3 +30,36 @@
 - {module: "1601", did: "D92C", action: caution, severity: high,
    why: "module stopped answering after this read 3 s after wake; start-up race likely",
    evidence: "DISCOVERIES.md 2026.11.13 correction"}
+
+# 1251 (head-up display): continuous polling while driving makes the car report Pilot Assist unavailable (2026-11-15, owner watching
+# the display, not unsafe; clears when the reads stop). Pass 1 17:48:12-17:48:51 (these nine + 1601:EE27), errors; all traffic stopped,
+# errors stopped; pass 2 17:50:11 same watch, errors; pass 3 17:52:11 these nine only, errors. Two single reads, five quick reads of D110
+# and one pass of all nine: no errors; a 10 s continuous loop: errors. Not yet tried parked. Caution, so ordinary scans and watches skip
+# them; --allow-caution for a deliberate test.
+- {module: "1251", did: "D110", action: caution, severity: medium,
+   why: "continuous polling of the HUD while driving made Pilot Assist report unavailable until the reads stopped (single reads were fine)",
+   evidence: "observed 2026-11-15 17:48-17:56, three passes while driving; DISCOVERIES.md 2026.11.15"}
+- {module: "1251", did: "D904", action: caution, severity: medium,
+   why: "continuous polling of the HUD while driving made Pilot Assist report unavailable until the reads stopped (single reads were fine)",
+   evidence: "observed 2026-11-15 17:48-17:56, three passes while driving; DISCOVERIES.md 2026.11.15"}
+- {module: "1251", did: "D905", action: caution, severity: medium,
+   why: "continuous polling of the HUD while driving made Pilot Assist report unavailable until the reads stopped (single reads were fine)",
+   evidence: "observed 2026-11-15 17:48-17:56, three passes while driving; DISCOVERIES.md 2026.11.15"}
+- {module: "1251", did: "D992", action: caution, severity: medium,
+   why: "continuous polling of the HUD while driving made Pilot Assist report unavailable until the reads stopped (single reads were fine)",
+   evidence: "observed 2026-11-15 17:48-17:56, three passes while driving; DISCOVERIES.md 2026.11.15"}
+- {module: "1251", did: "D993", action: caution, severity: medium,
+   why: "continuous polling of the HUD while driving made Pilot Assist report unavailable until the reads stopped (single reads were fine)",
+   evidence: "observed 2026-11-15 17:48-17:56, three passes while driving; DISCOVERIES.md 2026.11.15"}
+- {module: "1251", did: "D995", action: caution, severity: medium,
+   why: "continuous polling of the HUD while driving made Pilot Assist report unavailable until the reads stopped (single reads were fine)",
+   evidence: "observed 2026-11-15 17:48-17:56, three passes while driving; DISCOVERIES.md 2026.11.15"}
+- {module: "1251", did: "D996", action: caution, severity: medium,
+   why: "continuous polling of the HUD while driving made Pilot Assist report unavailable until the reads stopped (single reads were fine)",
+   evidence: "observed 2026-11-15 17:48-17:56, three passes while driving; DISCOVERIES.md 2026.11.15"}
+- {module: "1251", did: "D997", action: caution, severity: medium,
+   why: "continuous polling of the HUD while driving made Pilot Assist report unavailable until the reads stopped (single reads were fine)",
+   evidence: "observed 2026-11-15 17:48-17:56, three passes while driving; DISCOVERIES.md 2026.11.15"}
+- {module: "1251", did: "D998", action: caution, severity: medium,
+   why: "continuous polling of the HUD while driving made Pilot Assist report unavailable until the reads stopped (single reads were fine)",
+   evidence: "observed 2026-11-15 17:48-17:56, three passes while driving; DISCOVERIES.md 2026.11.15"}

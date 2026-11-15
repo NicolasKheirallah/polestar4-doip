@@ -33,6 +33,13 @@ def test_repo_hazards_file_is_valid():
     assert all(h.why for h in hs)
 
 
+def test_repo_hazards_keep_the_hud_polling_cautions():
+    # Continuous polling of these 1251 DIDs while driving knocked out Pilot Assist (2026-11-15); keep them out of ordinary watches.
+    hs = hazards.load(os.path.join(REPO, "catalogue", "hazards.yaml"))
+    hud = {0xD110, 0xD904, 0xD905, 0xD992, 0xD993, 0xD995, 0xD996, 0xD997, 0xD998}
+    assert {(0x1251, d, "caution") for d in hud} <= {(h.module, h.did, h.action) for h in hs}
+
+
 def test_missing_file_still_blocks_the_builtin(root, monkeypatch):
     monkeypatch.setenv("P4_ROOT", str(root))
     hs = hazards.load()

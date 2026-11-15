@@ -25,7 +25,9 @@
    examples: [{raw: "01", value: idle}]}
 - {id: charge_power_limit, module: "1635", did: "49DD", name: Charge power limit (unit unknown), type: u, confidence: P,
    examples: [{raw: "24", value: 36}]}
-- {id: charge_counter, module: "1635", did: "EE14", name: Accumulated charge counter, type: u, confidence: C,
+# EE14 unit (2026-11-15 DC charge, one charge): +130,836 over 26.79 -> 81.00 % 4801, while integrating 4802 over the same span gives
+# 130.8 Ah, so it counts mAh like EE13. 241.4 Ah per 100 % of 4801 (the BMS's own capacity view, rated 242.73 Ah).
+- {id: charge_counter, module: "1635", did: "EE14", name: Accumulated charge counter (mAh), type: u, unit: " mAh", confidence: C,
    examples: [{raw: "009e5d88", value: 10378632}]}
 - {id: discharge_counter, module: "1635", did: "EE13", name: Accumulated discharge counter (mAh; per a US owner, issue 2, and our parked current), type: u, unit: " mAh", confidence: C,
    examples: [{raw: "00d3cf44", value: 13881156}]}
@@ -227,27 +229,32 @@
    examples: [{raw: "1644", value: 7.0}]}
 
 # -- added 2026-11-13 (drives, parked tests and an audit of all recorded data) ------------------
-# Four wheel speeds: same scale as 1631 D003; all four within ~1 km/h of each other and of E36E on 2026-11-13 drives. Corner order unknown
-# (E3E4/E3E6 move together against E3E5/E3E7 in turns, so they look like same-side pairs).
-- {id: wheel_speed_1, module: "1601", did: "E3E4", name: "Wheel speed 1 (corner unknown)", type: u, scale: 0.0140625, unit: " km/h", confidence: P,
+# Four wheel speeds: same scale as 1631 D003; all four within ~1 km/h of each other and of E36E on 2026-11-13 drives.
+# Corners (2026-11-15, C): on right lock (n=56; roundabouts, sharp rights, driveway) E3E4 1.17, E3E5 0.94, E3E6 1.08, E3E7 0.81 of the mean;
+# on left lock (n=20) E3E4 0.94, E3E5 1.09, E3E6 0.91, E3E7 1.06. Outer front fastest, inner rear slowest in both directions.
+# Left/right as seen from the driver's seat.
+- {id: wheel_speed_1, module: "1601", did: "E3E4", name: "Wheel speed, left front", type: u, scale: 0.0140625, unit: " km/h", confidence: C,
    examples: [{raw: "0ddc", value: 49.89375}, {raw: "0000", value: 0}]}
-- {id: wheel_speed_2, module: "1601", did: "E3E5", name: "Wheel speed 2 (corner unknown)", type: u, scale: 0.0140625, unit: " km/h", confidence: P,
+- {id: wheel_speed_2, module: "1601", did: "E3E5", name: "Wheel speed, right front", type: u, scale: 0.0140625, unit: " km/h", confidence: C,
    examples: [{raw: "0d2a", value: 47.390625}, {raw: "0000", value: 0}]}
-- {id: wheel_speed_3, module: "1601", did: "E3E6", name: "Wheel speed 3 (corner unknown)", type: u, scale: 0.0140625, unit: " km/h", confidence: P,
+- {id: wheel_speed_3, module: "1601", did: "E3E6", name: "Wheel speed, left rear", type: u, scale: 0.0140625, unit: " km/h", confidence: C,
    examples: [{raw: "0d35", value: 47.545312}, {raw: "0000", value: 0}]}
-- {id: wheel_speed_4, module: "1601", did: "E3E7", name: "Wheel speed 4 (corner unknown)", type: u, scale: 0.0140625, unit: " km/h", confidence: P,
+- {id: wheel_speed_4, module: "1601", did: "E3E7", name: "Wheel speed, right rear", type: u, scale: 0.0140625, unit: " km/h", confidence: C,
    examples: [{raw: "0dec", value: 50.11875}]}
 # Motor speeds: 0x4E20 (20000) at rest, about 83 counts per km/h. E3E8 sits at 4e20 while cruising and matches E3E9 when pulling away:
 # fits the front motor disconnect in Range power delivery. Decoded with the 20000 offset removed (0 = stopped).
-- {id: motor_speed_front, module: "1601", did: "E3E8", name: "Front motor speed? (counts, 0 = stopped or disconnected)", type: u, add: -20000, confidence: P,
+# 2026-11-15 (C, two switches each way while cruising, 17:07-17:20): in Performance E3E8 turned on every read; ~9 s after switching to Range
+# it fell to 4e20 and stayed there. Whole day above 60 km/h: Range 136/438 reads turning, Performance 1411/1411. Both motors ~82.8 counts per km/h.
+- {id: motor_speed_front, module: "1601", did: "E3E8", name: "Front motor speed (counts; 0 = stopped or disconnected, as when cruising in Range)", type: u, add: -20000, confidence: C,
    examples: [{raw: "4e20", value: 0}, {raw: "5dd6", value: 4022}]}
 - {id: motor_speed_rear, module: "1601", did: "E3E9", name: "Rear motor speed? (counts, 0 = stopped)", type: u, add: -20000, confidence: P,
    examples: [{raw: "4e20", value: 0}, {raw: "5e56", value: 4150}]}
-# Longitudinal acceleration: about 128 counts per m/s2 against the derivative of D003 (r 0.75-0.84); + = slowing. Parked it reads a fixed
+# Longitudinal acceleration: about 128 counts per m/s2 against the derivative of D003 (r 0.75-0.84). SIGN CORRECTED 2026-11-15: + = speeding up
+# (r with dv/dt +0.44 on 11-12, +0.82 on 11-13 for both modules, +0.76/+0.74 on 11-15, n up to 7,033). Parked it reads a fixed
 # offset that depends on the slope where the car stands (gravity), so it is an inertial sensor.
-- {id: long_accel_vddm, module: "1601", did: "2B11", name: "Longitudinal deceleration (+ = slowing; includes slope)", type: s, scale: 0.0078125, unit: " m/s2", confidence: P,
+- {id: long_accel_vddm, module: "1601", did: "2B11", name: "Longitudinal acceleration (+ = speeding up; includes slope)", type: s, scale: 0.0078125, unit: " m/s2", confidence: P,
    examples: [{raw: "00000012", value: 0.140625}, {raw: "fffffff4", value: -0.09375}]}
-- {id: long_accel_bscm, module: "1701", did: "2B11", name: "Longitudinal deceleration (+ = slowing; includes slope and an offset)", type: s, scale: 0.0078125, unit: " m/s2", confidence: P,
+- {id: long_accel_bscm, module: "1701", did: "2B11", name: "Longitudinal acceleration (+ = speeding up; includes slope and an offset)", type: s, scale: 0.0078125, unit: " m/s2", confidence: P,
    examples: [{raw: "ffe0", value: -0.25}]}
 # Brake: E3C7 - 0x4000 = 7.2 x 1701 FE08 ch1 + 40 (r 0.998, 2026-11-13 morning drive); raw 0x4000 with the brake released, higher when held at a stop.
 - {id: brake_pressure_vddm, module: "1601", did: "E3C7", name: "Brake pressure? (counts, 0 = none)", type: u, add: -16384, confidence: P,
@@ -354,8 +361,12 @@
    examples: [{raw: "6c0000", value: "6c0000"}]}
 - {id: rear_fog, module: "1A01", did: "421C", name: Rear fog lamps, values: {"00000000": "off", "0000ffff": "on"}, confidence: C,
    examples: [{raw: "0000ffff", value: "on"}, {raw: "00000000", value: "off"}]}
-- {id: blind_spot_light_left, module: "1A13", did: "4003", name: Blind-spot warning light (left mirror), values: {"00": "off", "32": lit}, confidence: P,
-   examples: [{raw: "32", value: lit}, {raw: "00", value: "off"}]}
+# Blind-spot lights (2026-11-15 drive, C): right lit 17:40:21 and 17:40:34 with two owner calls of a car alongside on the right; left lit
+# 17:42:13, :39, :49 with three calls on the left. 64 in daylight, 32 after dark (brightness).
+- {id: blind_spot_light_left, module: "1A13", did: "4003", name: Blind-spot warning light (left mirror), values: {"00": "off", "32": "lit (dark)", "64": "lit (daylight)"}, confidence: C,
+   examples: [{raw: "32", value: "lit (dark)"}, {raw: "64", value: "lit (daylight)"}, {raw: "00", value: "off"}]}
+- {id: blind_spot_light_right, module: "1A12", did: "4003", name: Blind-spot warning light (right mirror), values: {"00": "off", "32": "lit (dark)", "64": "lit (daylight)"}, confidence: C,
+   examples: [{raw: "32", value: "lit (dark)"}, {raw: "64", value: "lit (daylight)"}, {raw: "00", value: "off"}]}
 - {id: charge_cable_present, module: "1650", did: "EE31", name: Charge cable present, values: {"00": "no", "01": "yes"}, confidence: P,
    examples: [{raw: "01", value: "yes"}, {raw: "00", value: "no"}]}
 - {id: mobileye_uptime, module: "1301", did: "EE04", name: Mobileye unit uptime, type: u, scale: 0.001, unit: " s", confidence: P,
@@ -380,3 +391,12 @@
    examples: [{raw: "01ff", value: 511}]}
 - {id: park_dist_b121, module: "1015", did: "B121", name: "Parking sensor distance, extra rear (outer, side not yet known) (cm; 511 = nothing seen)", type: u, unit: " cm", confidence: P,
    examples: [{raw: "01ff", value: 511}]}
+
+# -- added 2026-11-15 (long drive, ~600 km with a DC charge; turns watch at the end) ------------------
+# 1614 D92D, 3 bytes. Byte 0 = road speed in m/s (r 0.99 with 1631 D003, x 0.964: truncated). Byte 2 (signed) against yaw from the rear
+# wheel speeds ((E3E7 - E3E6) / 1.713 m rear track, Polestar 4 manual, + = left): slope 1.05 above 8 m/s (n=1102), 0.81 at 2-8 m/s; + = turning left.
+# One drive: P. Byte 1 unknown.
+- {id: speed_ms_sum, module: "1614", did: "D92D", name: "Road speed (whole m/s)", offset: 0, len: 1, type: u, unit: " m/s", confidence: P,
+   examples: [{raw: "090400", value: 9}]}
+- {id: yaw_rate_sum, module: "1614", did: "D92D", name: "Yaw rate (+ = turning left)", offset: 2, len: 1, type: s, unit: " deg/s", confidence: P,
+   examples: [{raw: "08fce8", value: -24}, {raw: "08000d", value: 13}]}

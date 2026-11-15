@@ -3,6 +3,15 @@
 Owned by the project; newest first. This file records tool, catalogue and documentation changes —
 observations about the car belong in docs/findings.md and DISCOVERIES.md, not here.
 
+## 2026-11-15 — catalogue and hazards from the long drive
+
+- `catalogue/hazards.yaml`: nine `1251` (head-up display) DIDs as caution (continuous polling while driving knocks out Pilot Assist).
+- `catalogue/signals.yaml`: wheel corners named (C); `motor_speed_front` renamed and C; `2B11` sign corrected (both modules);
+  blind-spot lights: `1A13:4003` gains `64` (daylight) and goes to C, new `blind_spot_light_right` (`1A12:4003`, C);
+  `charge_counter` (`EE14`) unit mAh; new `speed_ms_sum` and `yaw_rate_sum` on `1614:D92D` (P).
+- `docs/coverage.csv` regenerated: full scans of `1012` and part of `1A11` while driving.
+- `docs/did-leads.md`: `1614:D92D` moved to the catalogue.
+
 ## 2026-11-14 — public site: discovery coverage
 
 - `./p4 didmap` also writes `docs/coverage.csv` (module, dids_tried, dids_answering, refused: counts only);
