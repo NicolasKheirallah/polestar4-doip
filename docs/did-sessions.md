@@ -333,7 +333,7 @@ lines and score against the criteria — timestamps let both sides be lined up p
 | `E307` -> `1631` (T02) | `grep -h -e 1631:E307 -e 1637:E307 runs/<date>/watch-<name>.log` | `1631` `02` on each pull-away burst and `01` again while cruising (Range) while `1637` stays `02` through R/D (`docs/findings.md:114` already shows the pull-away half from recorded drives); cruise half missing = still P |
 | `E319` -> `1631` (T04) | `grep -h -e 1631:E319 -e 1637:E319 -e 1635:4802 runs/<date>/watch-<name>.log` | `1631:E319` flips `00`/`01` in step with `1637`'s 25 flips and the pack-current sign (`docs/findings.md:141`); two mismatches = ruled out |
 | `E307`, `E319` -> `1601` (T03/T05) | `grep -h -e 1601:E307 -e 1601:E319 runs/<date>/watch-<name>.log` | Only parked-cycle consistency can come from logs; drives decide — expect no hit, NOTHING |
-| `3019` -> `1670`, `1676` (T06/T07) | `grep -h -e 1670:3019 -e 1672:3019 -e 1676:3019 runs/<date>/watch-<name>.log` | `1670` within the small encoding offset of `1672` and `1676` alongside, through a full lock-to-lock sweep both ways; without a sweep in the log, snapshot equality below can rule out but not confirm |
+| `3019` -> `1670`, `1676` (T06/T07) | `grep -h -e 1670:3019 -e 1672:3019 -e 1676:3019 runs/<date>/watch-<name>.log` | `1670` = `0x3853` - 0.5614 x `1672` (opposite sign) and `1676` within 1 count of `1670`, through a full lock-to-lock sweep both ways; without a sweep in the log, snapshot equality below can rule out but not confirm |
 | `FE0D` -> `1A13` (T34) | `grep -h -e 1A12:FE0D -e 1A13:FE0D runs/2026-11-12/watch-mirrors.log` | Left raw 1-2 at rest, about `0x40`-`0x4b` while moving, on both fold and unfold — the same evidence the right side got (`catalogue/signals.yaml:77`); no hit = NOTHING (repeat the left fold test) |
 
 Snapshot fallback for the steering rows (partial: equal raws at shared moments rule out; confirm still
@@ -353,8 +353,8 @@ for f in sorted(glob.glob("runs/*/snap-*.json")):
 '
 ```
 
-`1670` and `1676` decode equal at every moment (they did minutes apart once, `docs/findings.md:175`) and
-near `1672`; any `1670` vs `1676` disagreement kills one of them as the angle. `1672`'s own decode is P
+`1670` and `1676` agree within 1 count at every moment (`docs/findings.md`, `1676` section), and `1670` =
+`0x3853` - 0.5614 x `1672` (opposite sign, `docs/findings.md`, `1670` section); any `1670` vs `1676` disagreement kills one of them as the angle. `1672`'s own decode is P
 with an approximate scale (`catalogue/signals.yaml:95`), so a pass lands as P and names the offset.
 
 ### D11 — NOTHING from recorded data (T13-T16 seats, T17/T18 EPB — 6 rows)
@@ -488,9 +488,9 @@ Pass criteria (check the raw CHANGE lines; `./p4 correlate <date>` aligns marks 
   (negative = regen current), back to `00` on each traction resume — twice each way, in step with `1637:E319`
   (which flipped with the current 22 of 25 times on the 2026-11-13 drive, `docs/findings.md:141`).
 - T05 `1601:E319`: flips with `1637:E319` on the same events, twice each way.
-- T06 `1670:3019`: stays within the small encoding offset of `1672:3019` through both lock-to-lock sweeps, left
-  and right; sign of change matches throughout (`docs/findings.md:159`).
-- T07 `1676:3019`: tracks the same sweeps alongside `1670`/`1672`, both directions (`docs/findings.md:175`).
+- T06 `1670:3019`: follows `0x3853` - 0.5614 x `1672:3019` through both lock-to-lock sweeps, left and right; the
+  sign of change is opposite throughout (`docs/findings.md`, `1670` section).
+- T07 `1676:3019`: tracks the same sweeps alongside `1670`/`1672`, both directions (`docs/findings.md`, `1676` section).
 
 **Follow-up**: finalise and paste the drafts for `D003` -> `1637` (T01); `E307` -> `1631` (T02);
 `E307` -> `1601` (T03); `E319` -> `1631` (T04); `E319` -> `1601` (T05); `3019` -> `1670` (T06);

@@ -125,6 +125,11 @@ Replace the existing `torque_direction` entry with:
 
 ### T06/T07 — steering_angle gains 1670 and 1676 — AFTER-SESSION (both)
 
+**Superseded 2026-11-16 (do not apply as written):** `1670:3019` is not `1672`'s encoding. Over 8,218 paired
+reads on the 2026-11-11 drives `1670:3019` = `0x3853` - 0.5614 x `1672:3019` (r -0.997): unsigned, centred on
+`0x3853`, opposite sign, about 0.1 °/count (see `docs/findings.md`, `1670` section). `1670`/`1676` need their own
+signal (type u, add -0x3853, scale about -0.1 for left positive), confirmed by the lock-to-lock watch below.
+
 Comment for `signals.yaml`:
 
     # 3019 answers 2 B on 1670 and 1676 (did-map.csv:2458, :2602); 1670 tracks the angle with a slightly
@@ -141,7 +146,7 @@ Replace the existing `steering_angle` entry with:
 Examples the confirming session must supply (`./p4 watch 1670:3019,1672:3019,1676:3019 --interval 0.2 --baseline 0`, full lock-to-lock sweep both ways):
 
 - TODO raw from the steering drive: `1670:3019` at full left lock and at full right lock, expected within
-  the small encoding offset of `1672:3019` at the same moment, through the whole sweep both directions.
+  `0x3853` - 0.5614 x `1672:3019` at the same moment, through the whole sweep both directions.
 - TODO raw from the same watch: `1676:3019` at both locks, same expectation.
 - Caveat: the draft assumes the `1672` decode (scale 0.0554) holds on `1670`/`1676`; if the sweep shows
   its own fixed offset or scale, amend `scale`/`add` before pasting and re-derive the values.

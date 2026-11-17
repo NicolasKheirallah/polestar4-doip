@@ -189,9 +189,9 @@
    examples: [{raw: "01ce01d500fc0103", value: 462}, {raw: "fffa0002fff5fffd", value: -6}]}
 - {id: brake_pressure_ch2, module: "1701", did: "FE08", offset: 2, len: 2, name: "Brake pressure? channel 2 (front?)", type: s, confidence: P,
    examples: [{raw: "01ce01d500fc0103", value: 469}]}
-- {id: brake_pressure_ch3, module: "1701", did: "FE08", offset: 4, len: 2, name: "Brake pressure? channel 3 (rear?)", type: s, confidence: P,
+- {id: brake_pressure_ch3, module: "1701", did: "FE08", offset: 4, len: 2, name: "Brake pressure? channel 3 (only 3-6 % of ch1 when braking on drives; not a plain rear pressure)", type: s, confidence: P,
    examples: [{raw: "01ce01d500fc0103", value: 252}]}
-- {id: brake_pressure_ch4, module: "1701", did: "FE08", offset: 6, len: 2, name: "Brake pressure? channel 4 (rear?)", type: s, confidence: P,
+- {id: brake_pressure_ch4, module: "1701", did: "FE08", offset: 6, len: 2, name: "Brake pressure? channel 4 (only 3-6 % of ch1 when braking on drives; not a plain rear pressure)", type: s, confidence: P,
    examples: [{raw: "01ce01d500fc0103", value: 259}]}
 - {id: brake_pedal_sensor_a, module: "1701", did: "D905", name: "Brake pedal travel or force? sensor A", type: s, confidence: P,
    examples: [{raw: "040a", value: 1034}, {raw: "fff8", value: -8}]}
@@ -207,23 +207,26 @@
    examples: [{raw: "c2", value: [bonnet]}, {raw: "62", value: []}]}
 
 # -- suspension 1614 (drives 2026-11-11; P) and outside temperature (issue #2 offset, checked here) ------------------
-# D93A: four per-corner bytes (in equal pairs), ~0x28 in Standard, ~0x30-0x57 in Firm, brief spikes on road inputs: damper command? Corner order unknown.
-- {id: damper_cmd_c1, module: "1614", did: "D93A", offset: 0, len: 1, name: "Damper command? corner 1 (order unknown)", type: u, confidence: P,
+# D93A: four per-corner bytes, ~0x28 in Standard, ~0x30-0x57 in Firm, brief spikes on road inputs: damper command?
+# Corners FL, FR, RL, RR (issue #2, a US owner's drives; here c1=c2 in 88 and c3=c4 in 85 of 94 drive reads, so the pairs are axles).
+- {id: damper_cmd_c1, module: "1614", did: "D93A", offset: 0, len: 1, name: "Damper command? front left", type: u, confidence: P,
    examples: [{raw: "3c3c3b3b", value: 60}, {raw: "28282929", value: 40}]}
-- {id: damper_cmd_c2, module: "1614", did: "D93A", offset: 1, len: 1, name: "Damper command? corner 2 (order unknown)", type: u, confidence: P,
+- {id: damper_cmd_c2, module: "1614", did: "D93A", offset: 1, len: 1, name: "Damper command? front right", type: u, confidence: P,
    examples: [{raw: "3c3c3b3b", value: 60}, {raw: "28282929", value: 40}]}
-- {id: damper_cmd_c3, module: "1614", did: "D93A", offset: 2, len: 1, name: "Damper command? corner 3 (order unknown)", type: u, confidence: P,
+- {id: damper_cmd_c3, module: "1614", did: "D93A", offset: 2, len: 1, name: "Damper command? rear left", type: u, confidence: P,
    examples: [{raw: "3c3c3b3b", value: 59}, {raw: "28282929", value: 41}]}
-- {id: damper_cmd_c4, module: "1614", did: "D93A", offset: 3, len: 1, name: "Damper command? corner 4 (order unknown)", type: u, confidence: P,
+- {id: damper_cmd_c4, module: "1614", did: "D93A", offset: 3, len: 1, name: "Damper command? rear right", type: u, confidence: P,
    examples: [{raw: "3c3c3b3b", value: 59}, {raw: "28282929", value: 41}]}
-# D902: four signed per-corner values, moving constantly while driving (weak negative link to deceleration): ride height or body motion?
-- {id: corner_motion_c1, module: "1614", did: "D902", offset: 0, len: 2, name: "Ride height or motion? corner 1 (order unknown)", type: s, confidence: P,
+# D902: four signed per-corner values, moving constantly while driving: ride height or body motion? + = corner extends.
+# Corners FL, FR, RL, RR (issue #2). Here (2026-11-11 drives, 94 reads): front minus rear tracks 1601 2B11 at r 0.87 (8.7 per m/s2
+# on the means), left minus right tracks yaw x speed at r 0.59, left turns extend c1 and c3; other pairings r ~0.
+- {id: corner_motion_c1, module: "1614", did: "D902", offset: 0, len: 2, name: "Ride height or motion? front left", type: s, confidence: P,
    examples: [{raw: "ffe2ffefffe5fff4", value: -30}]}
-- {id: corner_motion_c2, module: "1614", did: "D902", offset: 2, len: 2, name: "Ride height or motion? corner 2 (order unknown)", type: s, confidence: P,
+- {id: corner_motion_c2, module: "1614", did: "D902", offset: 2, len: 2, name: "Ride height or motion? front right", type: s, confidence: P,
    examples: [{raw: "ffe2ffefffe5fff4", value: -17}]}
-- {id: corner_motion_c3, module: "1614", did: "D902", offset: 4, len: 2, name: "Ride height or motion? corner 3 (order unknown)", type: s, confidence: P,
+- {id: corner_motion_c3, module: "1614", did: "D902", offset: 4, len: 2, name: "Ride height or motion? rear left", type: s, confidence: P,
    examples: [{raw: "ffe2ffefffe5fff4", value: -27}]}
-- {id: corner_motion_c4, module: "1614", did: "D902", offset: 6, len: 2, name: "Ride height or motion? corner 4 (order unknown)", type: s, confidence: P,
+- {id: corner_motion_c4, module: "1614", did: "D902", offset: 6, len: 2, name: "Ride height or motion? rear right", type: s, confidence: P,
    examples: [{raw: "ffe2ffefffe5fff4", value: -12}]}
 - {id: outside_temp_becm, module: "1635", did: "EE07", name: "Outside air temperature (offset per issue 2; not yet checked against the dash)", type: u, scale: 0.01, add: -50, unit: " C", confidence: P,
    examples: [{raw: "1644", value: 7.0}]}

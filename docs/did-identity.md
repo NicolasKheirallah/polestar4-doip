@@ -52,7 +52,7 @@ ISO 14229-1:2020 allocates `F100`-`F17F` and `F1A0`-`F1EF` to "vehicle manufactu
 | `F1AA` | 43 | 8 | Uniform |
 | `F1AB` | 43 | 8 | Uniform |
 | `F1AE` | 43 | 9-105 | Varies per module and is arithmetically tied to `F12E`: F1AE = F12E + 1 + (F12E-8)/7 on every module - one structure, not two independent values |
-| `DD00` | 40 | 4 | Project-established: free-running clock (`findings.md`) |
+| `DD00` | 40 | 4 | Project-established: clock in 0.1 s steps shared by all modules (`findings.md`) |
 | `DD01` | 40 | 3 | Project-established: odometer in km (`findings.md`) |
 | `DD02` | 40 | 1 | Unknown |
 | `DD0A` | 40 | 1 | Project-established: power mode (`findings.md`) |

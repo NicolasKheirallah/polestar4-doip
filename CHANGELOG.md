@@ -3,6 +3,12 @@
 Owned by the project; newest first. This file records tool, catalogue and documentation changes —
 observations about the car belong in docs/findings.md and DISCOVERIES.md, not here.
 
+## 2026-11-16 — reanalysis corrections
+
+- `catalogue/modules.yaml`: roles/notes for `1316` (software differs, `D237` heartbeat), `1670` (`3019` mapping), `1675` (second brake unit?), `1676` (placeholder-serial point dropped).
+- `catalogue/signals.yaml`: `brake_pressure_ch3`/`_ch4` names no longer say rear; `1614` `D902`/`D93A` names give the corner (issue #2), ids unchanged.
+- `docs/findings.md`, `docs/modules.md`, `PLAN.md`: the 2026.11.16 reanalysis. `docs/did-entries.md` T06/T07 draft marked superseded (`1670` needs its own decode); `docs/did-leads.md`, `docs/did-sessions.md`, `docs/did-ledger.md` stale rows and citations fixed. `catalogue/dids.yaml`: `DD00` named as the shared 0.1 s clock; `docs/did-identity.md` to match.
+
 ## 2026-11-15 — hardware catalogue
 
 - `catalogue/hardware.yaml`: part numbers per module, makers from the manual's certification pages (`F1AA`, `F1AB`, `F12A`, printable `F18A`), shared units, physical components. No serials.

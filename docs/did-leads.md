@@ -21,7 +21,7 @@ Decode established; what may be missing is only an example raw. "Raw" = quoted i
 | `1A01` | `410B` | `ambient_light_level` | offset 1, len 2, type u (counts, no scale yet) | same payload (level 0); daylight ~2,800-10,000 given only as decimal | findings.md:193 |
 | `1BB3,1BB4` | `4368` | `headlamp_scene` | whole-payload values: `11000000` home-safe (~90 s after locking), `00000020` approach | `11000000`, `00000020` | findings.md:259, 268; DISCOVERIES.md:141 |
 | `1A01` | `4222` | `welcome_lamp` | values: `000000` off, `ffff01` approach/welcome on | `000000`, `ffff01` | findings.md:191 |
-| `1675` | `F40D` | `obd_speed_1675` | type u, km/h (OBD PID 0D) | `00` (parked; not yet seen moving) | findings.md:170; modules.md:32 |
+| `1675` | `F40D` | `obd_speed_1675` | type u, km/h (OBD PID 0D) | `00` parked; moves with the car (r 0.999 against `1631:D003`, 2026-11-16) | findings.md `1675` section; modules.md:32 |
 | `1633` | `D914`,`D915`,`D919`,`D920` | `stalk_push_*` (one entry per DID) | values: `01` idle, `04` pushed (self-releases ~2 s) | `01`/`04` (byte values; width unstated) | findings.md:121 |
 | `1633` | `DA02`,`DA03` | `stalk_hold_*` (one entry per DID) | values: `01` idle, `03` held (the N gesture) | `01`/`03` (byte values; width unstated) | findings.md:121 |
 
@@ -47,7 +47,7 @@ Amendments (module-list extensions of existing `signals.yaml` entries; no new ex
 | `1A12` | `D938` | window-run log, newest first: 10-byte entries = start, end, a byte, timestamp; positions ~1000 closed, ~5900 open | array of fixed records | 10-byte structs, u16 positions; same DID as `1201` `park_selected` (section 4) | findings.md:208 |
 | `1601` | `EExx`/`EFxx` blocks | rolling logs or history buffers (change on almost every read parked; guess) | array / log | per-DID records; structures not yet established | findings.md:97 |
 
-Also needing the same support once their structure is known: `1317` `D237` event list with timestamps (weak; findings.md:79), `1A11` `FDE1` 100-byte structured block (findings.md:201). DISCOVERIES.md:84 records why `DA31`/`EE83` were left uncatalogued: "the decoder handles scalars only".
+Also needing the same support once their structure is known: `1316`/`1317` `D237` heartbeat log (type byte + `DD00` clock little-endian; findings.md `1317` section), `1A11` `FDE1` 100-byte structured block (findings.md:201). DISCOVERIES.md:84 records why `DA31`/`EE83` were left uncatalogued: "the decoder handles scalars only".
 
 ## 3. Interpreted but needs a capture-machine read
 
@@ -57,7 +57,7 @@ Decode rests on values seen on the car; no full payload hex in the docs (or labe
 |---|---|---|---|
 | `1011` | `FD50` | position: two s32 BE, longitude then latitude, deg = raw / 3,600,000; one parked read matched within ~100 m. Decoder-ready as two scalar entries; blocked only on a raw ("values never published") | findings.md:25; DISCOVERIES.md:28 |
 | `1001` + several | `D904` byte 0 | supply voltage x 0.1 V (moves `0x96`/`0x97` with load; weak) | findings.md:12; modules.md:46 |
-| `1631` | `E312` | vehicle speed, offset-binary: raw - `0x4000` at the `D003` scale (r 0.98 over two drives) | findings.md:116; DISCOVERIES.md:135 |
+| `1631` | `E312` | speed, offset-binary: raw - `0x4000`, about 70 counts per km/h (2026-11-16; not the `D003` scale, not the motor-speed scale) | findings.md:116; DISCOVERIES.md:135 |
 | `1631` | `E303` | front motor speed: raw - `0x4000`, ~83 counts/km/h, non-zero only in pull-away bursts | findings.md:114 |
 | `1631` | `E335`-`E338` | four near-equal per-wheel values (~`0x332c` parked); weak braking link | findings.md:116 |
 | `1601` | `E406` | vehicle speed in whole km/h | findings.md:93 |
@@ -72,7 +72,7 @@ Decode rests on values seen on the car; no full payload hex in the docs (or labe
 | `1635` | `49EC` | charge counter: 0 -> 46-54 in a 7 kW AC charge; scale unknown | findings.md:132 |
 | `1701` | `F449` | accelerator pedal (OBD PID 49): `00` at rest/regen/brake, `06`-`6A` pulling away; scale not established | findings.md:182; DISCOVERIES.md:30 |
 | `1656` | `D110` | 12 V rail in mV (14.0-14.2 V awake), pairs with `4947` | findings.md:153; modules.md:29 |
-| `1670`,`1676` | `3019` | steering angle; encoding differs slightly from `1672` and `1676:3019` matched `1670:3019` minutes apart — verify the scale before extending `steering_angle` | findings.md:159, 175 |
+| `1670`,`1676` | `3019` | steering angle; `1670:3019` = `0x3853` - 0.5614 x `1672:3019` (unsigned, opposite sign, 2026-11-16), and `1676` reads within 1 count of `1670`: needs its own decode, not `steering_angle`'s | findings.md `1670`, `1676` sections |
 | `1BB3,1BB4` | `435F`-`4362` | four duty channels (same shape as `435C`/`435D`): sit at 15 %, drop to 0 on the indicating side — DRL/position dimming (guess) | findings.md:260 |
 | `1A01` | `4218` | wiper switch/mode state: `00`/`20`/`40`, changed with the button, reads `40` through the day; labels unknown | findings.md:188; DISCOVERIES.md:22 |
 | `1A01` | `4443`,`45A3` | gain the same door/tailgate ajar bits as `42F2` | findings.md:190 |

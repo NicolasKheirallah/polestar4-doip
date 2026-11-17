@@ -40,7 +40,7 @@
 - {did: "F1AA", name: manufacturer-specific identification, family: identity, note: uniform 8 bytes}
 - {did: "F1AB", name: manufacturer-specific identification, family: identity, note: uniform 8 bytes}
 - {did: "F1AE", name: manufacturer-specific record (coupled to F12E), family: identity, note: F1AE = F12E + 1 + (F12E-8)/7 on every module}
-- {did: "DD00", name: free-running clock, family: common}
+- {did: "DD00", name: "clock, 0.1 s, shared by all modules", family: common}
 - {did: "DD01", name: odometer, family: common, note: km, every answering module}
 - {did: "DD02", name: unknown flag, family: common, note: 1 byte, undecoded}
 - {did: "DD0A", name: power mode, family: common, note: recorded with scan runs so car states stay comparable}

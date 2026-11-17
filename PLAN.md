@@ -24,8 +24,8 @@ noted in `local/session-log.md`. Anything less is **P**.
 
 | Module | Guess | Why | Try |
 |---|---|---|---|
-| 1316 / 1317 | corner radars or other left/right sensor pair | same hardware part, serials 7 apart, next to front radar 1344 | walk round the car; stand at each corner 10 s; select reverse; open a door on each side |
-| 1676 | second steering unit | same software part numbers and placeholder serial as PSCM 1670 | scan 1670 first, then `./p4 scan 1676 --like 1670`; `./p4 watch 1670 1676` and turn the wheel lock to lock |
+| 1316 / 1317 | left/right pair, identity unknown (the manual certifies one radar) | same hardware part, different software parts, serials 7 apart, next to front radar 1344 | walk round the car; stand at each corner 10 s; select reverse; open a door on each side |
+| 1676 | second steering unit | same DID set as PSCM 1670, sibling part numbers; 3019/D900 read 1670's angle | scan 1670 first, then `./p4 scan 1676 --like 1670`; `./p4 watch 1670 1676` and turn the wheel lock to lock |
 | 1675 | chassis, unknown | sits between steering addresses | steering, gear selector, brake pedal, drive mode; it answers OBD PID 0D (`F40D`) |
 | 1656 | charging/power related | sits beside charger 1650 | plug in and charge; switch on heavy 12 V loads; climate on/off |
 | 1251 | head-up display | usual label for that address; answers a physical address scan only | HUD on/off, brightness, height |

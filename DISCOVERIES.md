@@ -6,6 +6,28 @@ Confidence follows `catalogue/signals.yaml`: **C** = the same change seen at lea
 
 <!-- New entries go directly below this line, newest first. The heading must be "## <version> - <title>". -->
 
+## 2026.11.16 - Reanalysis of every run
+
+Offline: all watch logs (212 files, 2026-11-11 to 11-15) and 108 snapshots re-read together, each published claim checked against the other modules' readings.
+
+**Held up**
+- Speed sources agree within 0.3 % (`1631:D003`, `1601:E36E`, the four wheel speeds, `1701`/`1675` `F40D`). Both motors run at 82.8 counts (rpm, P) per km/h of their own axle's wheel speed. Wheel corners hold in both turn directions. `2B11` (+ = speeding up), `E319` (traction never draws negative current), the stop lamps on regen from about 0.6 m/s², `EE13`/`EE14` against the integrated current (`EE13` gross discharge, `EE14` charging only, not regen), `D112` at about 0.08 V on five modules, and the yaw rate in `1614:D92D` (median ratio 1.02 and 0.97 against the rear wheels over 24 10-s and 15 20-s windows; single reads scatter 0.6-1.6).
+- The one-unit pairs `1201`/`1202` and `1633`/`1672` share a real serial. `1631`/`1637` and `1670`/`1676` share only a placeholder, which says nothing.
+
+**New**
+- `DD00` is a clock in 0.1 s steps, shared by every module; its reads over five days fall on one line against the laptop clock, overnight sleeps included. Module logs stamp entries with it: the door window logs (`1A12`/`1A13:D938` bytes 6-9) and `1316`/`1317:D237`, so their entries can be dated.
+- `1670:3019` = `0x3853` - 0.5614 x `1672:3019` (r -0.997, about 230 changes): opposite sign; if `1670` counts 0.1 ° (inference), `1672` is 0.0561 °/count (by eye: 0.0554).
+- `1675` may be a second brake unit (weak): its `F40D` speed moves with the car (published as never seen moving), and its `FE08` is a pair of close words like `1701:FE08` channels 1-2, about zero parked with the brake off and `0x113`-`0x1a9` in R or D on one day (four snapshots).
+
+**From issue #2** (thanks to the US owner who worked these out on their own car and shared them)
+- Suspension corners, `1614:D902` and `D93A` (P): front left, front right, rear left, rear right. Checked on this car's 2026-11-11 drives: `D902` front minus rear follows the longitudinal acceleration (`2B11`, r 0.87) and left minus right follows yaw x speed (r 0.59), left turns extending the left pair; `D93A` reads in front and rear pairs, the front a count above the rear in Firm.
+
+**Corrections**
+- `1316`/`1317:D237` is a heartbeat log (types `05`/`06` every 305 s, `07`/`02`/`04` at power changes), not traffic events. `1316`/`1317` have different software parts (the 2026.11.13 wording said shared). `1A12` no longer calls them side radars.
+- `1701:FE08` channels 3-4 read only 3-6 % of channel 1 while braking on drives (the one parked hard press read about 55 %): not a plain rear-axle pressure.
+- `1631:E312` runs at about 70 counts per km/h, not the motors' 83, so it is not simply the front motor speed.
+- `1676`: the serial it shares with `1670` is a placeholder, so it no longer counts as evidence.
+
 ## 2026.11.15.3 - Hardware catalogue
 
 Offline, from the identification reads in the 2026-11-10 to 2026-11-12 full scans.

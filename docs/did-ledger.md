@@ -114,8 +114,10 @@ Entry: [did-entries.md](did-entries.md) T04/T05 (AFTER-SESSION).
 
 ### T06 — `3019` -> `1670` (steering_angle, P on `1672`)
 
+**2026-11-16:** not the same decode: `1670:3019` = `0x3853` - 0.5614 x `1672:3019` (findings.md `1670` section); see did-entries.md T06/T07.
+
 Family: steering set. Verdict: **needs-session**.
-Evidence: `findings.md:159`: tracks the angle while driving, encoding differs slightly — the `1670` scale
+Evidence: `findings.md`, `1670` section: `0x3853` - 0.5614 x `1672:3019` (opposite sign), so the `1670` scale
 is not established; no raw quoted anywhere; 2 B, holds the s16 (`did-map.csv:2458`); source decode P, scale
 approximate (`signals.yaml:95-96`).
 Procedure: Session A — the lock-to-lock watch (full lock-to-lock sweep both ways). Cheaper pre-check on the
@@ -127,7 +129,7 @@ Entry: [did-entries.md](did-entries.md) T06/T07 (AFTER-SESSION).
 ### T07 — `3019` -> `1676`
 
 Family: steering set. Verdict: **needs-session**.
-Evidence: `findings.md:175`: equal to `1670:3019` minutes apart, parked, once; 2 B (`did-map.csv:2602`);
+Evidence: `findings.md`, `1676` section: within 1 count of `1670:3019` across 11 snapshots; 2 B (`did-map.csv:2602`);
 `did-leads.md:70`.
 Procedure: Session A — the same sweep watch; must track the full sweep alongside `1670`/`1672`, both
 directions. Offline: Session D §10.
